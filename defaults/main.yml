@@ -1,6 +1,6 @@
 ---
 
-#app_name: seleniumagent
+app_name: seleniumagent
 app_version: 12.4.473
 
 server_port: 8080
@@ -16,7 +16,14 @@ sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
 custom_download_url: ""
 
 cdn_name: "devops-artifacts.experitest.com"
-s3_download_url : "https://{{ cdn_name }}/{{ relative_path }}/{{ installer_file_name }}"
+s3_download_url: "https://{{ cdn_name }}/{{ relative_path }}/{{ installer_file_name }}"
 
-vmoptions_properties:
+# RETHINK be the same for both install4j and zip files
+# lets not use install4j semantics (vmoptions)
+
+base_vmoptions_properties:
   - "-Dallow.cors": "true"
+
+extra_vmoptions_properties: {}
+
+vmoptions_properties: "{{ base_vmoptions_properties | combine(extra_vmoptions_properties) }}"
