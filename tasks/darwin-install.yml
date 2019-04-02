@@ -40,8 +40,8 @@
     dest: "{{ temp_folder }}/{{ installer_file_name }}"
   when: custom_download_url != ""
 
-
 # copy var file
+
 - name: copy var file
   template:
     src: agent.varfile.j2
@@ -49,8 +49,10 @@
 
 # stop old service
 
-- block:
-    - name: Get running processes
+- name: stop the service
+  block:
+
+    - name: get running processes
       shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
       register: running_processes  
     
@@ -58,9 +60,10 @@
       debug: 
         msg: "{{ running_processes.stdout_lines }}"
     
-    - name: Kill running processes
+    - name: kill running processes
       shell: "sudo kill -9 {{ item }}"
       loop: "{{ running_processes.stdout_lines }}"
+  
   become: yes
   ignore_errors: yes
 
@@ -71,8 +74,6 @@
     path: "{{ installation_folder }}"
     state: absent
   when: clear_before_install == True
-  notify:
-    - start the service
 
 # unpack and copy all the files and add volumes
 
@@ -83,37 +84,48 @@
     owner: "{{ ansible_user_id }}"
   become: yes
 
-- name: check if disk is attached
-  stat:
-    path: /Volumes/selenium_agent
-  register: stat_result
+- name: attach the dmg file
+  block:
 
-- name: unmount the attached disk
-  command: sudo hdiutil unmount /Volumes/selenium_agent -force
-  when: stat_result.stat.exists
-  ignore_errors: yes
+    - name: check if disk is attached
+      stat:
+        path: /Volumes/selenium_agent
+      register: stat_result
 
-- name: detach old disks
-  command: sudo /bin/bash -c "diskutil list | grep selenium_agent | awk '{print $5}' | xargs -I {} sh -c "hdiutil detach {}""
-  ignore_errors: yes
+    - name: unmount the attached disk
+      command: sudo hdiutil unmount /Volumes/selenium_agent -force
+      when: stat_result.stat.exists
+      ignore_errors: yes
 
-- name: attach new disk
-  command: sudo hdiutil attach {{ temp_folder }}/{{ installer_file_name }}
+    - name: detach old disks
+      command: sudo /bin/bash -c "diskutil list | grep selenium_agent | awk '{print $5}' | xargs -I {} sh -c "hdiutil detach {}""
+      ignore_errors: yes
 
+    - name: attach new disk
+      command: sudo hdiutil attach {{ temp_folder }}/{{ installer_file_name }}
+
+  become: yes
 
 # start installation
-- name: Starting silent Installation
+
+- name: starting silent Installation
   shell: "sudo /Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-{{ ansible_date_time.epoch }}.log"
-  environment:
-    PATH: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
   args:
     executable: /bin/bash
-
+  become: yes
 
 # stop service
 
-- block:
-    - name: Get running processes
+# /bin/kill -9 `ps -ef | grep selenium_agent_server | grep -v grep | awk '{print $2}' | xargs`
+# /bin/kill -9 `ps -ef | grep selenium_grid_node | grep -v grep | awk '{print $2}' | xargs`
+# /bin/kill -9 `ps -ef | grep manual.*.jar | grep -v grep | awk '{print $2}' | xargs`
+# /bin/kill -9 `ps -ef | grep watch | grep -v grep | awk '{print $2}' | xargs`
+# /bin/kill -9 `ps -ef | grep safaridriver | grep -v grep | awk '{print $2}' | xargs`
+
+- name: stop the service
+  block:
+
+    - name: get running processes
       shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
       register: running_processes  
     
@@ -121,11 +133,15 @@
       debug: 
         msg: "{{ running_processes.stdout_lines }}"
     
-    - name: Kill running processes
+    - name: kill running processes
       shell: "sudo kill -9 {{ item }}"
       loop: "{{ running_processes.stdout_lines }}"
+  
   become: yes
   ignore_errors: yes
+
+# RETHINK be the same for both install4j and zip files
+# lets not use install4j semantics (vmoptions)
 
 # configure installed 
 
@@ -137,26 +153,25 @@
   with_dict: "{{ vmoptions_properties }}"
   become: yes
 
+# INVESTIGATE do we need this?
 - name: enable safari driver
   shell: sudo /usr/bin/safaridriver --enable
-  ignore_errors: yes
+  become: yes
+  ignore_errors: yes #?
 
-- name: copy launcher file
-  copy:
-    src: run.sh
-    dest: "{{ installation_folder }}/"
-    mode: 0777
+- name: register launch agent
+  shell: |
+    osascript -e 'tell application "System Events" to make login item at end with properties {name: "selenium_agent_server", path:"{{ installation_folder }}/selenium_agent_server", hidden:false}'
+  become: yes
+
+# FIX move to handler?
 
 # launch selenium agent (optional)
-   
+
 - name: launch selenium agent (mac)
   shell: "sudo {{ installation_folder }}/{{ launcher_file_name }}"
-  args:
-    executable: /bin/sh
-  ignore_errors: yes
   become: yes
   when: start_after_install == True
-
 
 # clear temp files (optional)
 

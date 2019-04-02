@@ -5,10 +5,10 @@
   - installation_folder
   - temp_folder
 
-# Stop service
-- block:
+- name: stop the service
+  block:
 
-    - name: Get running processes
+    - name: get running processes
       shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
       register: running_processes  
     
@@ -16,11 +16,12 @@
       debug: 
         msg: "{{ running_processes.stdout_lines }}"
     
-    - name: Kill running processes
+    - name: kill running processes
       shell: "sudo kill -9 {{ item }}"
       loop: "{{ running_processes.stdout_lines }}"
-
+  
   become: yes
+  ignore_errors: yes
 
 - name: remove the application folder
   file:

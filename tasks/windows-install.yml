@@ -41,6 +41,7 @@
   when: custom_download_url != ""
 
 # copy var file
+
 - name: copy var file
   win_template:
     src: agent.varfile.j2
@@ -48,9 +49,15 @@
 
 # stop old service
 
-- name: stop the old service
-  win_command: "taskkill /F /IM selenium_agent_server.exe /T"
-  ignore_errors: yes
+# taskkill /f /im selenium_grid_node.exe
+# taskkill /f /im selenium_agent_server.exe
+
+- name: kill the old service
+  win_shell: |
+    taskkill /F /IM selenium_agent_server.exe /T
+  register: killseleniumresults
+  changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
+  failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   become: yes
 
 # delete old installation (optional)
@@ -79,15 +86,18 @@
 - name: wait for installer
   async_status:
     jid: "{{ installer_sync.ansible_job_id }}"
-  register: job_result_conf
-  until: job_result_conf.finished
+  register: wait_for_installer
+  until: wait_for_installer.finished
   retries: 18
   delay: 10
 
-# configure installed 
+# RETHINK be the same for both install4j and zip files
+# lets not use install4j semantics (vmoptions)
+
+# configure installed
 
 - name: update vmoptions file
-  lineinfile:
+  win_lineinfile:
     path: "{{ installation_folder }}\\selenium_agent_server.vmoptions"
     line: "{{ item.key }}={{ item.value }}"
     regexp: "^{{ item.key }}="
