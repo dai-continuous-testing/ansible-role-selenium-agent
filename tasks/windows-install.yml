@@ -1,0 +1,122 @@
+
+# validation
+
+- name: assert all vars are set
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+  - temp_folder
+  - installation_folder
+  - clear_temp_folder
+  - clear_before_install
+  - server_port
+  - installer_file_name
+  - s3_download_url
+  - vmoptions_properties
+  - launcher_file_name
+
+# required dependencies
+
+
+# set temp folder
+
+- name: make sure temp folder exists
+  win_file:
+    path: "{{ temp_folder }}"
+    state: directory
+
+# download the file
+
+- name: download from s3 url
+  win_get_url:
+    url: "{{ s3_download_url }}"
+    dest: "{{ temp_folder }}\\{{ installer_file_name }}"
+    force: no
+  when: custom_download_url == ""
+
+- name: download from custom url
+  win_get_url:
+    url: "{{ custom_download_url }}"
+    dest: "{{ temp_folder }}\\{{ installer_file_name }}"
+    force: no
+  when: custom_download_url != ""
+
+# copy var file
+- name: copy var file
+  win_template:
+    src: agent.varfile.j2
+    dest: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
+
+# stop old service
+
+- name: stop the old service
+  win_command: "taskkill /F /IM selenium_agent_server.exe /T"
+  ignore_errors: yes
+  become: yes
+
+# delete old installation (optional)
+
+- name: clear old installation folder
+  win_file: 
+    path: "{{ installation_folder }}"
+    state: absent
+  when: clear_before_install == True
+
+# unpack all the files and run the installer
+
+- name: make sure installation folder exists
+  win_file:
+    path: "{{ installation_folder }}"
+    state: directory
+  become: yes
+
+- name: run the installer
+  win_command: "{{ temp_folder }}/{{ installer_file_name }} -q"
+  async: 180
+  poll: 0
+  register: installer_sync
+  become: yes
+
+- name: wait for installer
+  async_status:
+    jid: "{{ installer_sync.ansible_job_id }}"
+  register: job_result_conf
+  until: job_result_conf.finished
+  retries: 18
+  delay: 10
+
+# configure installed 
+
+- name: update vmoptions file
+  lineinfile:
+    path: "{{ installation_folder }}\\selenium_agent_server.vmoptions"
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key }}="
+  with_dict: "{{ vmoptions_properties }}"
+  become: yes
+
+# launch selenium agent (optional)
+
+- name: launch selenium agent (windows)
+  win_command: "{{ installation_folder }}\\{{ launcher_file_name }}"
+  become: yes
+  when: start_after_install == True
+
+# clear temp files (optional)
+
+- name: clear temp folder
+  win_file:
+    path: "{{ temp_folder }}"
+    state: absent
+  when: clear_temp_folder == True
+
+# expose role output
+
+- name: sanitize role name
+  set_fact:
+    sanitize_role_name: "{{ role_name | replace('-', '_') | regex_replace('([^A-Za-z0-9_])', '') | trim }}"
+
+- name: expose role output
+  set_fact:
+    "{{ sanitize_role_name }}":
+      server_port: "{{ server_port }}"
+      installation_folder: "{{ installation_folder }}"

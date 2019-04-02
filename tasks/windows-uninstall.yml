@@ -1,0 +1,22 @@
+
+- name: assert all vars are set
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+  - installation_folder
+  - temp_folder
+
+- name: stop the old service
+  win_command: "taskkill /F /IM selenium_agent_server.exe /T"
+  ignore_errors: yes
+  become: yes
+
+- name: remove installation folder
+  win_file: 
+    path: "{{ installation_folder }}"
+    state: absent
+
+- name: remove temp folder
+  win_file:
+    path: "{{ temp_folder }}"
+    state: absent
+  when: clear_temp_folder == True

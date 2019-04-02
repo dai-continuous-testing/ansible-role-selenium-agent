@@ -1,0 +1,4 @@
+
+- src: git+https://github.com/ExperitestOfficial/ansible-role-selenium-agent.git
+  version: master
+  name: selenium-agent

@@ -1,0 +1,35 @@
+
+- name: assert all vars are set
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+  - installation_folder
+  - temp_folder
+
+# Stop service
+- block:
+
+    - name: Get running processes
+      shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
+      register: running_processes  
+    
+    - name: print status of running processes
+      debug: 
+        msg: "{{ running_processes.stdout_lines }}"
+    
+    - name: Kill running processes
+      shell: "sudo kill -9 {{ item }}"
+      loop: "{{ running_processes.stdout_lines }}"
+
+  become: yes
+
+- name: remove the application folder
+  file:
+    path: "{{ installation_folder }}"
+    state: absent
+  become: yes
+
+- name: remove temp folder
+  file:
+    path: "{{ temp_folder }}"
+    state: absent
+  when: clear_temp_folder == True

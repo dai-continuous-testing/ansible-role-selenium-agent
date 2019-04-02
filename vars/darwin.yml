@@ -1,0 +1,12 @@
+---
+
+installation_folder: "{{ ansible_user_dir }}/experitest/SeleniumAgent"
+
+temp_folder: "/tmp/experitest"
+
+installer_file_name: "selenium_agent_macos_{{ sel_app_version }}.dmg"
+
+relative_path: "selenium-agent/osx"
+
+launcher_file_name: "run.sh"
+
