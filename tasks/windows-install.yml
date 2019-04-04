@@ -107,7 +107,7 @@
 # launch selenium agent (optional)
 
 - name: launch selenium agent (windows)
-  win_command: "{{ installation_folder }}\\{{ launcher_file_name }}"
+  win_command: "cscript.exe {{ installation_folder }}\\{{ launcher_file_name }}"
   become: yes
   when: start_after_install == True
 
