@@ -5,14 +5,10 @@
   - installation_folder
   - temp_folder
 
-- name: kill the old service
-  win_shell: |
-    taskkill /F /IM selenium_agent_server.exe /T
-  register: killseleniumresults
-  changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
-  failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
-  become: yes
-  
+
+- name: run uninstaller
+  win_command: "{{ installation_folder }}\\uninstall.exe -q"
+
 - name: remove installation folder
   win_file: 
     path: "{{ installation_folder }}"

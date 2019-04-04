@@ -77,7 +77,7 @@
   become: yes
 
 - name: run the installer
-  win_command: "{{ temp_folder }}/{{ installer_file_name }} -q"
+  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q"
   async: 180
   poll: 0
   register: installer_sync
