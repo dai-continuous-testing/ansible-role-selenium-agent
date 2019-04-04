@@ -15,7 +15,7 @@ Role Variables
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | state | should the application be present or absent | present, absent | present | no |
-| app_version | application version to install | string | 12.4.473 | no |
+| app_version | application version to install | string | 12.3.473 | no |
 | server_port | port number for the server | number | 8080 | no |
 | vmoptions_properties | additional props to be override vmoptions file | dict | {} | no |
 | installation_folder | the folder in which the applction will be installed | string | for mac: ~/experitest/SeleniumAgent <br> for windows: C:\\Experitest\\SeleniumAgent  | no |
