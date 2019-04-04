@@ -110,6 +110,8 @@
 
 - name: starting silent Installation
   shell: "sudo /Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-{{ ansible_date_time.epoch }}.log"
+  environment:
+    PATH: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
   args:
     executable: /bin/bash
   become: yes
