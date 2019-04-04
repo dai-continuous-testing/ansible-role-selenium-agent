@@ -169,7 +169,7 @@
 # launch selenium agent (optional)
 
 - name: launch selenium agent (mac)
-  shell: "sudo {{ installation_folder }}/{{ launcher_file_name }}"
+  shell: "sudo {{ installation_folder }}/{{ launcher_file_name }} &"
   become: yes
   when: start_after_install == True
 
