@@ -5,17 +5,19 @@
   - installation_folder
   - temp_folder
 
-
 - name: run uninstaller
   win_command: "{{ installation_folder }}\\uninstall.exe -q"
+  become: yes
 
 - name: remove installation folder
   win_file: 
     path: "{{ installation_folder }}"
     state: absent
+  become: yes
 
 - name: remove temp folder
   win_file:
     path: "{{ temp_folder }}"
     state: absent
   when: clear_temp_folder == True
+  become: yes
