@@ -142,17 +142,14 @@
   become: yes
   ignore_errors: yes
 
-# RETHINK be the same for both install4j and zip files
-# lets not use install4j semantics (vmoptions)
-
 # configure installed 
 
 - name: update vmoptions file
   lineinfile:
     path: "{{ installation_folder }}/selenium_agent_server.vmoptions"
-    line: "{{ item.key }}={{ item.value }}"
-    regexp: "^{{ item.key }}="
-  with_dict: "{{ vmoptions_properties }}"
+    line: "{{ item }}"
+    regexp: "^{{ item }}"
+  with_items: "{{ extra_java_options }}"
   become: yes
 
 # INVESTIGATE do we need this?
