@@ -1,9 +1,4 @@
 
 - hosts: selenium-agents
-
-  pre_tasks:
-    
-    # NA
-
   roles:
     - role: selenium-agent
