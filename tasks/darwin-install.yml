@@ -11,7 +11,7 @@
   - server_port
   - installer_file_name
   - s3_download_url
-  - vmoptions_properties
+  - extra_java_options
   - launcher_file_name
 
 # required dependencies

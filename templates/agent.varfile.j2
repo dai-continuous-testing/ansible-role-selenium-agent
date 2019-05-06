@@ -1,5 +1,5 @@
 serverPort$Long={{ server_port }}
 sys.adminRights$Boolean=true
-sys.installationDir={{ installation_folder }}
+sys.installationDir={{ installation_folder | replace("\\", "\\\\") }}
 sys.languageId=en
 sys.programGroupDisabled$Boolean=true

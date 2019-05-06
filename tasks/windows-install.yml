@@ -11,7 +11,7 @@
   - server_port
   - installer_file_name
   - s3_download_url
-  - vmoptions_properties
+  - extra_java_options
   - launcher_file_name
 
 # required dependencies
@@ -77,7 +77,7 @@
   become: yes
 
 - name: run the installer
-  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q"
+  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 180"
   async: 180
   poll: 0
   register: installer_sync
