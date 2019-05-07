@@ -16,6 +16,18 @@
 
 # required dependencies
 
+- name: ram test
+  block:
+
+    - name: get machine ram
+      command: /usr/sbin/sysctl -n hw.memsize
+      register: ram_command
+
+    - name: perform ram test
+      assert:
+        that: ram_command.stdout|int >= 8589934592
+        success_msg: "ram test passed: {{ ram_command.stdout }} >= 8589934592"
+        fail_msg: "ram test failed: {{ ram_command.stdout }} >= 8589934592"
 
 # set temp folder
 
@@ -61,7 +73,7 @@
         msg: "{{ running_processes.stdout_lines }}"
     
     - name: kill running processes
-      shell: "sudo kill -9 {{ item }}"
+      shell: "kill -9 {{ item }}"
       loop: "{{ running_processes.stdout_lines }}"
   
   become: yes
@@ -81,7 +93,7 @@
   file:
     path: "{{ installation_folder }}"
     state: directory
-    owner: "{{ ansible_user_id }}"
+  become_user: "{{ ansible_user_id }}"
   become: yes
 
 - name: attach the dmg file
@@ -93,27 +105,32 @@
       register: stat_result
 
     - name: unmount the attached disk
-      command: sudo hdiutil unmount /Volumes/selenium_agent -force
+      command: hdiutil unmount /Volumes/selenium_agent -force
       when: stat_result.stat.exists
       ignore_errors: yes
 
     - name: detach old disks
-      command: sudo /bin/bash -c "diskutil list | grep selenium_agent | awk '{print $5}' | xargs -I {} sh -c "hdiutil detach {}""
+      command: /bin/bash -c "diskutil list | grep selenium_agent | awk '{print $5}' | xargs -I {} sh -c "hdiutil detach {}""
       ignore_errors: yes
 
     - name: attach new disk
-      command: sudo hdiutil attach {{ temp_folder }}/{{ installer_file_name }}
+      command: hdiutil attach {{ temp_folder }}/{{ installer_file_name }}
 
   become: yes
 
 # start installation
 
+- name: get machine ram
+  command: /usr/sbin/sysctl -n hw.memsize
+  register: ram_command
+
 - name: starting silent Installation
-  shell: "sudo /Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-{{ ansible_date_time.epoch }}.log"
+  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log"
   environment:
-    PATH: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+    SELENIUM_RAM: "{{ ram_command.stdout }}"
   args:
     executable: /bin/bash
+  become_user: "{{ansible_user_id }}"
   become: yes
 
 # stop service
@@ -150,6 +167,7 @@
     line: "{{ item }}"
     regexp: "^{{ item }}"
   with_items: "{{ extra_java_options }}"
+  become_user: "{{ ansible_user_id }}"
   become: yes
 
 # INVESTIGATE do we need this?
@@ -158,17 +176,13 @@
   become: yes
   ignore_errors: yes #?
 
-- name: register launch agent
-  shell: |
-    osascript -e 'tell application "System Events" to make login item at end with properties {name: "selenium_agent_server", path:"{{ installation_folder }}/selenium_agent_server", hidden:false}'
-  become: yes
-
-# FIX move to handler?
+# FIXME move to handler?
 
 # launch selenium agent (optional)
 
 - name: launch selenium agent (mac)
-  shell: "sudo {{ installation_folder }}/{{ launcher_file_name }} &"
+  shell: "{{ installation_folder }}/{{ launcher_file_name }} &"
+  become_user: "{{ ansible_user_id }}"
   become: yes
   when: start_after_install == True
 
