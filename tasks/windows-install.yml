@@ -117,12 +117,13 @@
 
 - name: set autologin
   script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }}
+  become_user: "{{ ansible_user_id }}"
   become: yes
 
 - name: reboot the machine
   win_reboot:
   when: 
-    - avoid_reboot | default('no') | bool
+    - avoid_reboot | default('yes') | bool
 
 # clear temp files (optional)
 
