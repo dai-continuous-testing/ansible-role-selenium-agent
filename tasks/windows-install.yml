@@ -49,9 +49,6 @@
 
 # stop old service
 
-# taskkill /f /im selenium_grid_node.exe
-# taskkill /f /im selenium_agent_server.exe
-
 - name: kill the old service
   win_shell: |
     taskkill /F /IM selenium_agent_server.exe /T
@@ -116,12 +113,16 @@
   with_items: "{{ extra_java_options }}"
   become: yes
 
-# launch selenium agent (optional)
+# register autologin and reboot (optional)
 
-- name: launch selenium agent (windows)
-  win_command: "cscript.exe {{ installation_folder }}\\{{ launcher_file_name }}"
+- name: set autologin
+  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }}
   become: yes
-  when: start_after_install == True
+
+- name: reboot the machine
+  win_reboot:
+  when: 
+    - avoid_reboot | default('no') | bool
 
 # clear temp files (optional)
 
