@@ -93,7 +93,7 @@
   fail:
     msg: "unrecognized error {{ wait_for_installer.msg }}"
   when:
-    - wait_for_installer|failed
+    - wait_for_installer is failed
     - wait_for_installer.msg != 'Unexpected failure during module execution.'
 
 - name: make sure machine is reachable
@@ -112,18 +112,6 @@
     regexp: "^{{ item }}"
   with_items: "{{ extra_java_options }}"
   become: yes
-
-# register autologin and reboot (optional)
-
-- name: set autologin
-  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }}
-  become_user: "{{ ansible_user_id }}"
-  become: yes
-
-- name: reboot the machine
-  win_reboot:
-  when: 
-    - avoid_reboot | default('yes') | bool
 
 # clear temp files (optional)
 

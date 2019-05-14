@@ -1,0 +1,19 @@
+
+
+# validation
+
+- name: assert all vars are set
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+    - autologin_pass
+
+- name: tap to kcpassword
+  homebrew_tap:
+    name:  xfreebird/utils
+
+- name: install kcpassword
+  homebrew_cask:
+    name:  kcpassword
+
+- name: run the autologin util
+  command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_pass }}"
