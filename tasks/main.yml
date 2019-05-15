@@ -4,12 +4,12 @@
   include_vars: 
     file: "{{ ansible_os_family | os_family_to_os_type }}.yml"
 
-- name: validate auto login
-  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-autologin.yml"
-  when: state|default('present') == 'present'
-
 - name: install
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-install.yml"
+  when: state|default('present') == 'present'
+
+- name: validate auto login
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-autologin.yml"
   when: state|default('present') == 'present'
 
 - name: uninstall
