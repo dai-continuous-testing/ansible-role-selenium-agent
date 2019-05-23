@@ -8,5 +8,6 @@
 
 - name: reboot the machine
   win_reboot:
+    reboot_timeout: "{{ reboot_timeout | default(600) }}"
   when: 
     - avoid_reboot | default('yes') | bool
