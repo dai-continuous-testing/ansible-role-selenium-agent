@@ -87,7 +87,7 @@
   file: 
     path: "{{ installation_folder }}"
     state: absent
-  when: clear_before_install == True
+  when: clear_before_install | default('no') | bool
 
 # unpack and copy all the files and add volumes
 
@@ -186,7 +186,7 @@
   shell: "{{ installation_folder }}/{{ launcher_file_name }} &"
   become_user: "{{ ansible_user_id }}"
   become: yes
-  when: start_after_install == True
+  when: start_after_install | default('yes') | bool
 
 # clear temp files (optional)
 

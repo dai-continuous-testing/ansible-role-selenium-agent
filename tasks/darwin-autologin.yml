@@ -12,8 +12,16 @@
     name:  xfreebird/utils
 
 - name: install kcpassword
-  homebrew_cask:
+  homebrew:
     name:  kcpassword
 
 - name: run the autologin util
   command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_pass }}"
+
+- name: reboot the machine
+  reboot:
+    reboot_timeout: "{{ reboot_timeout | default(600) }}"
+  
+  become: yes
+  when:
+    - avoid_reboot | default('yes') | bool
