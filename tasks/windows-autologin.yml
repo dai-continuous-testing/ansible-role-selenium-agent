@@ -2,7 +2,7 @@
 # register autologin and reboot (optional)
 
 - name: set autologin
-  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }}
+  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }} -AutoLogonCount "999"
   become_user: "{{ ansible_user_id }}"
   become: yes
 
