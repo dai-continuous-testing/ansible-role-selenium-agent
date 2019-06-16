@@ -1,6 +1,6 @@
 ---
 
-installation_folder: "{{ ansible_user_dir }}/SeleniumAgent"
+__installation_folder: "{{ ansible_user_dir }}/SeleniumAgent"
 
 temp_folder: "/tmp/experitest"
 
