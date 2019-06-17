@@ -45,6 +45,7 @@
     url: "{{ s3_download_url }}"
     dest: "{{ temp_folder }}/{{ installer_file_name }}"
     timeout: "{{ download_timeout | default(60) }}"
+    use_proxy: "{{ download_use_proxy | default('no') }}"
   when: custom_download_url == ""
 
 - name: download from custom url
@@ -52,6 +53,7 @@
     url: "{{ custom_download_url }}"
     dest: "{{ temp_folder }}/{{ installer_file_name }}"
     timeout: "{{ download_timeout | default(60) }}"
+    use_proxy: "{{ download_use_proxy | default('no') }}"
   when: custom_download_url != ""
 
 # copy var file
