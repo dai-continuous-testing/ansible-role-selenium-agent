@@ -15,7 +15,7 @@ Role Variables
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
 | state | should the application be present or absent | present, absent | present | no |
-| app_version | application version to install | string | 12.5.533 | no |
+| app_version | application version to install | string | 12.6.575 | no |
 | server_port | port number for the server | number | 8080 | no |
 | autologin_pass | password for auto login | strings |  | yes |
 | extra_java_options | extand java options | array of strings | [] | no |
