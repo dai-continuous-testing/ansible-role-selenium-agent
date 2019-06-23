@@ -6,8 +6,26 @@
   become_user: "{{ ansible_user_id }}"
   become: yes
 
+- name: run poweshell to check if user is logged in
+  win_shell: |
+    $processinfo = Get-WmiObject -Query "select * from win32_process where name='explorer.exe'"
+    $processinfo | ForEach-Object { $_.GetOwner().User } | Sort-Object -Unique
+  register: sh
+
+- name: count experiusers
+  win_shell: |
+    (Get-LocalUser -Name experiuser* | Measure).Count
+  register: count_users
+
+- name: set user_logged_in var
+  set_fact:
+    user_logged_in: "{{ ansible_user_id in sh.stdout }}"
+    experi_users_count: "{{ count_users.stdout | int }}"
+    default_reboot_timeout: "{{ 60 + count_users.stdout | int * 30 }}"
+
 - name: reboot the machine
   win_reboot:
-    reboot_timeout: "{{ reboot_timeout | default(600) }}"
+    reboot_timeout: "{{ reboot_timeout | default(default_reboot_timeout) }}"
   when: 
+    - not user_logged_in
     - avoid_reboot | default('yes') | bool

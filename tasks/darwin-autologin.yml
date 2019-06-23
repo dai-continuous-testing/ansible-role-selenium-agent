@@ -7,16 +7,63 @@
   with_items:
     - autologin_pass
 
-- name: tap to kcpassword
-  homebrew_tap:
-    name:  xfreebird/utils
+- name: detect login state
+  block:
+    
+    - name: make sure launchagent folder exist
+      file: 
+        path: ~/Library/LaunchAgents
+        state: directory
 
-- name: install kcpassword
-  homebrew:
-    name:  kcpassword
+    - name: make sure main file exists
+      copy:
+        content: |
+          #! /bin/sh
+          date +%s
+        dest: ~/logon-test.sh
+    
+    - name: add launch agent
+      copy: 
+        src: logon-test.plist
+        dest: ~/Library/LaunchAgents/com.expritest.logon-test.plist
 
-- name: run the autologin util
-  command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_pass }}"
+    - name: launch the agent
+      command: launchctl load ~/Library/LaunchAgents/com.expritest.logon-test.plist
+      changed_when: no
+      failed_when: no
+      register: load_result
+
+    - name: set logged in fact
+      set_fact:
+        user_logged_in: "{{ load_result.rc == 0 }}"
+
+  always:
+
+    - name: unload launch agent
+      command: launchctl unload ~/Library/LaunchAgents/com.expritest.logon-test.plist
+      changed_when: no
+      ignore_errors: yes
+
+    - name: remove temp files
+      file: 
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - ~/Library/LaunchAgents/com.expritest.logon-test.plist
+
+- name: set autologin
+  block:
+
+    - name: tap to kcpassword
+      homebrew_tap:
+        name:  xfreebird/utils
+
+    - name: install kcpassword
+      homebrew:
+        name:  kcpassword
+
+    - name: run the autologin util
+      command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_pass }}"
 
 - name: reboot the machine
   reboot:
@@ -24,4 +71,5 @@
   
   become: yes
   when:
+    - not user_logged_in
     - avoid_reboot | default('yes') | bool
