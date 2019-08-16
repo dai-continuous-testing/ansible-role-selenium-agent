@@ -117,14 +117,6 @@
   with_items: "{{ extra_java_options }}"
   become: yes
 
-# clear temp files (optional)
-
-- name: clear temp folder
-  win_file:
-    path: "{{ temp_folder }}"
-    state: absent
-  when: clear_temp_folder | default('no') | bool
-
 # expose role output
 
 - name: sanitize role name
