@@ -14,10 +14,3 @@
     path: "{{ installation_folder }}"
     state: absent
   become: yes
-
-- name: remove temp folder
-  win_file:
-    path: "{{ temp_folder }}"
-    state: absent
-  when: clear_temp_folder | default('no') | bool
-  become: yes
