@@ -5,6 +5,26 @@
   - installation_folder
   - temp_folder
 
+# stop service
+
+- name: kill the service
+  win_shell: |
+    taskkill /F /IM selenium_agent_server.exe /T
+  register: killseleniumresults
+  changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
+  failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
+  become: yes
+
+- name: kill the selenium grid nodes
+  win_shell: |
+    taskkill /F /IM selenium_grid_node.exe /T
+  register: killgridresults
+  changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  become: yes
+
+# uninstall
+
 - name: run uninstaller
   win_command: "{{ installation_folder }}\\uninstall.exe -q"
   become: yes

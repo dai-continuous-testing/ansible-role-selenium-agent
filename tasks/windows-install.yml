@@ -44,6 +44,17 @@
     use_proxy: "{{ download_use_proxy | default('no') }}"
   when: custom_download_url != ""
 
+# external proxy
+
+- name: require params if external proxy is true
+  assert: { that: "{{ item }} != '' " }
+  with_items:
+  - external_proxyhost
+  - external_proxyport
+  - external_proxyuser
+  - external_proxypassword
+  when: external_proxy == true
+
 # copy var file
 
 - name: copy var file
@@ -91,6 +102,8 @@
   poll: 0
   register: installer_sync
   become: yes
+  notify:
+    - start the service
 
 - name: wait for installer
   async_status:

@@ -24,6 +24,8 @@ Role Variables
 | start_after_install | should application start after installation is completed | boolean | True | no |
 | clear_temp_folder | remove temp folder after installation | boolean | False | no |
 | clear_before_install | removing old installation before installing new version | boolean | False | no |
+| is_restrictive | enable restrictive mode for selenium browsers | boolean | false | no |
+| external_proxy | enable external proxy for selenium browsers | boolean | false | no |
 
 Example Playbook
 ----------------
