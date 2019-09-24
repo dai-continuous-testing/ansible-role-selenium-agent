@@ -61,6 +61,14 @@
   failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   become: yes
 
+- name: kill the old selenium grid nodes
+  win_shell: |
+    taskkill /F /IM selenium_grid_node.exe /T
+  register: killgridresults
+  changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  become: yes
+
 # delete old installation (optional)
 
 - name: clear old installation folder
@@ -116,6 +124,14 @@
     regexp: "^{{ item }}"
   with_items: "{{ extra_java_options }}"
   become: yes
+
+# reboot selenium agent
+
+- name: reboot selenium agent
+  reboot:
+    reboot_timeout: "{{ reboot_timeout | default(600) }}"
+  become: yes
+  when: reboot_after_install == True
 
 # expose role output
 
