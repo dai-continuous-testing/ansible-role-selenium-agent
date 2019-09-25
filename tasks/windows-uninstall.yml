@@ -46,6 +46,11 @@
 
 # disable ie proxy - temp. added until it get fixed from uninstall.exe
 
+- name: make sure temp folder exists
+  win_file:
+    path: "{{ temp_folder }}"
+    state: directory
+
 - name: copy ieproxy reg file
   win_copy: 
     src: disable_ieproxy.reg
