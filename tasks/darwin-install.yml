@@ -101,6 +101,8 @@
     - watch
     - safaridriver
   become: yes
+  changed_when: no
+  failed_when: no
   ignore_errors: yes
 
 # delete old installation (optional)
@@ -176,11 +178,11 @@
   become_user: "{{ ansible_user_id }}"
   become: yes
 
-# ## INVESTIGATE do we need this?
-# - name: enable safari driver
-#   command: /usr/bin/safaridriver --enable
-#   become: yes
-#   ignore_errors: yes
+## INVESTIGATE do we need this?
+- name: enable safari driver
+  command: /usr/bin/safaridriver --enable
+  become: yes
+  ignore_errors: yes
   
 # set permission to logs folder
 
@@ -200,7 +202,7 @@
   become: yes
   when: reboot_after_install == True
 
-- name: wait for experi users profile get loaded
+- name: wait for experiusers login
   wait_for_connection:
     delay: 60
     timeout: 300

@@ -17,6 +17,8 @@
     - watch
     - safaridriver
   become: yes
+  changed_when: no
+  failed_when: no
   ignore_errors: yes
 
 - name: remove installation folder
