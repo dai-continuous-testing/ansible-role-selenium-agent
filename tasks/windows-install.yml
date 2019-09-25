@@ -69,7 +69,7 @@
 
 # stop old service
 
-- name: kill the old service
+- name: kill the old selenium agent server
   win_shell: |
     taskkill /F /IM selenium_agent_server.exe
   register: killseleniumresults
