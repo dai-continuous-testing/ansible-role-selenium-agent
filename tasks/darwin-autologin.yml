@@ -6,6 +6,8 @@
   with_items:
     - autologin_pass
 
+# required dependencies
+
 - name: check if brew is installed
   stat:
     path: /usr/local/bin/brew
@@ -16,6 +18,8 @@
     msg: brew is not installed or didn't found on path /usr/local/bin/brew
   when: brew_result.stat.exists == False
  
+# autologin
+
 - name: detect login state
   block:
     

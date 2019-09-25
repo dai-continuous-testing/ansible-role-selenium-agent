@@ -1,9 +1,9 @@
 
-# ## Need to check if this needed ?
-# - name: launch selenium agent (mac)
-#   shell: "{{ installation_folder }}/{{ launcher_file_name }} &"
-#   become: yes
-#   ignore_errors: True  
+## Need to check if this needed ?
+- name: launch selenium agent (mac)
+  command: "{{ installation_folder }}/{{ launcher_file_name }} &"
+  become: yes
+  ignore_errors: True  
 
 - name: wait for service to start
   health_check:

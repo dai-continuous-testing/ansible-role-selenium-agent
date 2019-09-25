@@ -181,7 +181,7 @@
 # notify handlers
 
 - name: notify handlers
-  shell: "echo notify handlers"
+  command: "echo notify handlers"
   notify:
     - start the service
 
