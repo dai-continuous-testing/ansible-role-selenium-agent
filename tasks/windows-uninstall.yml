@@ -7,7 +7,7 @@
 
 # stop service
 
-- name: kill the service
+- name: kill the selenium agent server
   win_shell: |
     taskkill /F /IM selenium_agent_server.exe
   register: killseleniumresults
@@ -25,9 +25,17 @@
 
 # uninstall
 
+- name: check uninstall.exe exists
+  win_stat:
+    path: "{{ installation_folder }}\\uninstall.exe"
+  register: uninstaller_exists
+  become: yes
+
 - name: run uninstaller
   win_command: "{{ installation_folder }}\\uninstall.exe -q"
   become: yes
+  when: 
+    - uninstaller_exists.stat.exists
 
 - name: remove installation folder
   win_file: 
