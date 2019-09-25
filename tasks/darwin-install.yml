@@ -84,11 +84,10 @@
   command: "launchctl unload {{ service_plist_file_path }}"
   ignore_errors: yes
 
+  ## need to check weather it requires to stop ?
 - name: stop other service
   shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
   with_items:
-    - selenium_grid_node
-    - manual.*.jar
     - watch
     - safaridriver
   become: yes
@@ -169,19 +168,26 @@
 
 # INVESTIGATE do we need this?
 - name: enable safari driver
-  shell: sudo /usr/bin/safaridriver --enable
+  command: /usr/bin/safaridriver --enable
   become: yes
   ignore_errors: yes
 
-# copy audio plist
+# copy plist
 
-- name: copy audio plist
+- name: copy selenium agent plist
   template:
     src: service.plist.j2
     dest: "{{ service_plist_file_path }}"
+    
+# set permission to logs folder
+
+- name: set permissions for logs folder
+  file:
+    path: "{{ installation_folder }}/logs"
+    state: directory
+    mode: 0777
     owner: "{{ ansible_user_id }}"
-    group: staff
-    mode: '0755'
+  become: yes
 
 # reboot selenium agent
 

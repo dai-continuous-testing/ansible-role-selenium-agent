@@ -2,6 +2,7 @@
 ## Need to check if this needed ?
 - name: launch selenium agent (mac)
   command: "launchctl load {{ service_plist_file_path }}"
+  ignore_errors: yes
 
 - name: wait for service to start
   health_check:
