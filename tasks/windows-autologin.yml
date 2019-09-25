@@ -2,11 +2,11 @@
 # register autologin and reboot (optional)
 
 - name: set autologin
-  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ ansible_password }} -AutoLogonCount "999"
+  script: Set-AutoLogon.ps1 -DefaultUsername {{ ansible_user_id }} -DefaultPassword {{ autologin_password | default(ansible_password) }} -AutoLogonCount "999"
   become_user: "{{ ansible_user_id }}"
   become: yes
 
-- name: run poweshell to check if user is logged in
+- name: run powershell to check if user is logged in
   win_shell: |
     $processinfo = Get-WmiObject -Query "select * from win32_process where name='explorer.exe'"
     $processinfo | ForEach-Object { $_.GetOwner().User } | Sort-Object -Unique
