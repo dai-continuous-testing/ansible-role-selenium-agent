@@ -68,7 +68,6 @@
 - name: reboot the machine
   reboot:
     reboot_timeout: "{{ reboot_timeout | default(600) }}"
-  
   become: yes
   when:
     - not user_logged_in

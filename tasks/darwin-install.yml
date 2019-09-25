@@ -63,23 +63,31 @@
     src: agent.varfile.j2
     dest: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
 
+# external proxy
+
+- name: add external proxy
+  lineinfile:
+    path: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
+    line: "{{ item }}"
+    regexp: "^{{ item }}"
+  with_items:
+    - externalProxyHost={{ external_proxy_host }}
+    - externalProxyPort={{ external_proxy_port }}
+    - externalProxyUser={{ external_proxy_user }}
+    - externalProxyPassword={{ external_proxy_password }}
+  become: yes
+  when: use_external_proxy == True
+
 # stop old service
 
 - name: stop the service
-  block:
-
-    - name: get running processes
-      shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
-      register: running_processes  
-    
-    - name: print status of running processes
-      debug: 
-        msg: "{{ running_processes.stdout_lines }}"
-    
-    - name: kill running processes
-      shell: "kill -9 {{ item }}"
-      loop: "{{ running_processes.stdout_lines }}"
-  
+  shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
+  with_items:
+    - selenium_agent_server
+    - selenium_grid_node
+    - manual.*.jar
+    - watch
+    - safaridriver
   become: yes
   ignore_errors: yes
 
@@ -139,29 +147,11 @@
 
 # stop service
 
-# /bin/kill -9 `ps -ef | grep selenium_agent_server | grep -v grep | awk '{print $2}' | xargs`
-# /bin/kill -9 `ps -ef | grep selenium_grid_node | grep -v grep | awk '{print $2}' | xargs`
-# /bin/kill -9 `ps -ef | grep manual.*.jar | grep -v grep | awk '{print $2}' | xargs`
-# /bin/kill -9 `ps -ef | grep watch | grep -v grep | awk '{print $2}' | xargs`
-# /bin/kill -9 `ps -ef | grep safaridriver | grep -v grep | awk '{print $2}' | xargs`
-
-- name: stop the service
-  block:
-
-    - name: get running processes
-      shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
-      register: running_processes  
-    
-    - name: print status of running processes
-      debug: 
-        msg: "{{ running_processes.stdout_lines }}"
-    
-    - name: kill running processes
-      shell: "sudo kill -9 {{ item }}"
-      loop: "{{ running_processes.stdout_lines }}"
-  
-  become: yes
-  ignore_errors: yes
+# /bin/kill -9 $(ps -ef | grep selenium_agent_server | grep -v grep | awk '{print $2}' | xargs)
+# /bin/kill -9 $(ps -ef | grep selenium_grid_node | grep -v grep | awk '{print $2}' | xargs)
+# /bin/kill -9 $(ps -ef | grep manual.*.jar | grep -v grep | awk '{print $2}' | xargs)
+# /bin/kill -9 $(ps -ef | grep watch | grep -v grep | awk '{print $2}' | xargs)
+# /bin/kill -9 $(ps -ef | grep safaridriver | grep -v grep | awk '{print $2}' | xargs)
 
 # configure installed 
 
@@ -178,17 +168,22 @@
 - name: enable safari driver
   shell: sudo /usr/bin/safaridriver --enable
   become: yes
-  ignore_errors: yes #?
+  ignore_errors: yes
 
-# FIXME move to handler?
+# reboot selenium agent
 
-# launch selenium agent (optional)
-
-- name: launch selenium agent (mac)
-  shell: "{{ installation_folder }}/{{ launcher_file_name }} &"
-  become_user: "{{ ansible_user_id }}"
+- name: reboot selenium agent
+  reboot:
+    reboot_timeout: "{{ reboot_timeout | default(600) }}"
   become: yes
-  when: start_after_install | default('yes') | bool
+  when: reboot_after_install == True
+
+# notify handlers
+
+- name: notify handlers
+  shell: "echo notify handlers"
+  notify:
+    - start the service
 
 # expose role output
 
