@@ -1,13 +1,12 @@
 Experitest - Selenium Agent ansible role
 =========
 
-This role will install \ uninstall selenium agent for mac os hosts
+This role will install \ uninstall selenium agent for windows and mac os hosts
 
 Requirements
 ------------
 
-This role assumes that you have java 8 installed on the instance
-Supports mac os hosts only.
+Supports windows and mac os hosts only.
 
 Role Variables
 --------------
