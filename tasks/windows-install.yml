@@ -71,7 +71,7 @@
 
 - name: kill the old service
   win_shell: |
-    taskkill /F /IM selenium_agent_server.exe /T
+    taskkill /F /IM selenium_agent_server.exe
   register: killseleniumresults
   changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
@@ -79,7 +79,7 @@
 
 - name: kill the old selenium grid nodes
   win_shell: |
-    taskkill /F /IM selenium_grid_node.exe /T
+    taskkill /F /IM selenium_grid_node.exe
   register: killgridresults
   changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
   failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
@@ -107,8 +107,6 @@
   poll: 0
   register: installer_sync
   become: yes
-  notify:
-    - start the service
 
 - name: wait for installer
   async_status:
@@ -150,6 +148,13 @@
     reboot_timeout: "{{ reboot_timeout | default(600) }}"
   become: yes
   when: reboot_after_install == True
+
+# notify handlers
+
+- name: notify handlers
+  win_shell: "echo notify handlers"
+  notify:
+    - start the service
 
 # expose role output
 

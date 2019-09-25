@@ -12,7 +12,7 @@ __server_port: 8080
 
 extra_java_options: []
 
-# start_after_install: True
+start_after_install: True
 
 clear_temp_folder: False
 clear_before_install: False
