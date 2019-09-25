@@ -42,3 +42,17 @@
     path: "{{ installation_folder }}"
     state: absent
   become: yes
+
+
+# disable ie proxy - temp. added until it get fixed from uninstall.exe
+
+- name: copy ieproxy reg file
+  win_copy: 
+    src: disable_ieproxy.reg
+    dest: "{{ temp_folder }}\\disable_ieproxy.reg"
+  become: yes
+
+- name: disable ieproxy
+  win_regmerge:
+    path: "{{ temp_folder }}\\disable_ieproxy.reg"
+  become: yes
