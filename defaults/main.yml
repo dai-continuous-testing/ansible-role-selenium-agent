@@ -21,10 +21,10 @@ reboot_after_install: True
 is_restrictive: False
 
 use_external_proxy: False
-# external_proxyhost:
-# external_proxyport:
-# external_proxyuser:
-# external_proxypassword:
+# external_proxy_host:
+# external_proxy_port:
+# external_proxy_user:
+# external_proxy_password:
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"

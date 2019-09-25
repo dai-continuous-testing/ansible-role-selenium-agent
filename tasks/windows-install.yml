@@ -59,10 +59,10 @@
     line: "{{ item }}"
     regexp: "^{{ item }}"
   with_items:
-    - externalProxyHost={{ external_proxyhost }}
-    - externalProxyPort={{ external_proxyport }}
-    - externalProxyUser={{ external_proxyuser }}
-    - externalProxyPassword={{ external_proxypassword }}
+    - externalProxyHost={{ external_proxy_host }}
+    - externalProxyPort={{ external_proxy_port }}
+    - externalProxyUser={{ external_proxy_user }}
+    - externalProxyPassword={{ external_proxy_password }}
   become: yes
   when: use_external_proxy == True
 
