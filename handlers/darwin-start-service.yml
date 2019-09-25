@@ -1,9 +1,7 @@
 
 ## Need to check if this needed ?
 - name: launch selenium agent (mac)
-  command: "{{ installation_folder }}/{{ launcher_file_name }} &"
-  become: yes
-  ignore_errors: True  
+  command: "launchctl load {{ service_plist_file_path }}"
 
 - name: wait for service to start
   health_check:

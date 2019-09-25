@@ -80,10 +80,13 @@
 
 # stop old service
 
-- name: stop the service
+- name: stop selenium agent service
+  command: "launchctl unload {{ service_plist_file_path }}"
+  ignore_errors: yes
+
+- name: stop other service
   shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
   with_items:
-    - selenium_agent_server
     - selenium_grid_node
     - manual.*.jar
     - watch
@@ -169,6 +172,16 @@
   shell: sudo /usr/bin/safaridriver --enable
   become: yes
   ignore_errors: yes
+
+# copy audio plist
+
+- name: copy audio plist
+  template:
+    src: service.plist.j2
+    dest: "{{ service_plist_file_path }}"
+    owner: "{{ ansible_user_id }}"
+    group: staff
+    mode: '0755'
 
 # reboot selenium agent
 
