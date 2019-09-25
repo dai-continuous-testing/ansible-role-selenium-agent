@@ -44,23 +44,28 @@
     use_proxy: "{{ download_use_proxy | default('no') }}"
   when: custom_download_url != ""
 
-# external proxy
-
-- name: require params if external proxy is true
-  assert: { that: "{{ item }} != '' " }
-  with_items:
-  - external_proxyhost
-  - external_proxyport
-  - external_proxyuser
-  - external_proxypassword
-  when: external_proxy == true
-
 # copy var file
 
 - name: copy var file
   win_template:
     src: agent.varfile.j2
     dest: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
+
+# external proxy
+
+- name: add external proxy
+  win_lineinfile:
+    path: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
+    line: "{{ item }}"
+    regexp: "^{{ item }}"
+  with_items:
+    - externalProxyHost={{ external_proxyhost }}
+    - externalProxyPort={{ external_proxyport }}
+    - externalProxyUser={{ external_proxyuser }}
+    - externalProxyPassword={{ external_proxypassword }}
+  become: yes
+  when: use_external_proxy == True
+
 
 # stop old service
 
@@ -97,8 +102,8 @@
   become: yes
 
 - name: run the installer
-  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 180"
-  async: 180
+  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 300"
+  async: 300
   poll: 0
   register: installer_sync
   become: yes
@@ -110,7 +115,7 @@
     jid: "{{ installer_sync.ansible_job_id }}"
   register: wait_for_installer
   until: wait_for_installer.finished
-  retries: 18
+  retries: 30
   delay: 10 
   ignore_errors: yes
 

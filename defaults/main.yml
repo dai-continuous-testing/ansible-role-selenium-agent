@@ -4,25 +4,11 @@ required_modifiable_fields:
   - app_version
   - server_port
   - installation_folder
-  - is_restrictive
-  - external_proxy
-  - external_proxyhost
-  - external_proxyport
-  - external_proxyuser
-  - external_proxypassword
 
 app_name: seleniumagent
 __app_version: 12.8.680
 
 __server_port: 8080
-
-__is_restrictive: false
-
-__external_proxy: false
-__external_proxyhost: ""
-__external_proxyport: ""
-__external_proxyuser: ""
-__external_proxypassword: ""
 
 extra_java_options: []
 
@@ -31,6 +17,14 @@ extra_java_options: []
 clear_temp_folder: False
 clear_before_install: False
 reboot_after_install: True
+
+is_restrictive: False
+
+use_external_proxy: False
+# external_proxyhost:
+# external_proxyport:
+# external_proxyuser:
+# external_proxypassword:
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
