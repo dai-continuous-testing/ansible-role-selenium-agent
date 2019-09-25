@@ -1,5 +1,4 @@
 
-
 # validation
 
 - name: assert all vars are set
@@ -7,13 +6,25 @@
   with_items:
     - autologin_pass
 
+- name: check if brew is installed
+  stat:
+    path: /usr/local/bin/brew
+  register: brew_result
+
+- name: fail if brew not installed
+  fail: 
+    msg: brew is not installed or didn't found on path /usr/local/bin/brew
+  when: brew_result.stat.exists == False
+ 
 - name: detect login state
   block:
     
     - name: make sure launchagent folder exist
       file: 
-        path: ~/Library/LaunchAgents
+        path: "/Users/{{ ansible_user_id }}/Library/LaunchAgents"
         state: directory
+        owner: "{{ ansible_user_id }}"
+      become: yes
 
     - name: make sure main file exists
       copy:
@@ -25,10 +36,10 @@
     - name: add launch agent
       copy: 
         src: logon-test.plist
-        dest: ~/Library/LaunchAgents/com.expritest.logon-test.plist
+        dest: ~/Library/LaunchAgents/com.experitest.logon-test.plist
 
     - name: launch the agent
-      command: launchctl load ~/Library/LaunchAgents/com.expritest.logon-test.plist
+      command: launchctl load ~/Library/LaunchAgents/com.experitest.logon-test.plist
       changed_when: no
       failed_when: no
       register: load_result
@@ -40,7 +51,7 @@
   always:
 
     - name: unload launch agent
-      command: launchctl unload ~/Library/LaunchAgents/com.expritest.logon-test.plist
+      command: launchctl unload ~/Library/LaunchAgents/com.experitest.logon-test.plist
       changed_when: no
       ignore_errors: yes
 
@@ -49,7 +60,7 @@
         path: "{{ item }}"
         state: absent
       with_items:
-        - ~/Library/LaunchAgents/com.expritest.logon-test.plist
+        - ~/Library/LaunchAgents/com.experitest.logon-test.plist
 
 - name: set autologin
   block:

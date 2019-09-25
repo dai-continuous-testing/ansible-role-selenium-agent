@@ -3,7 +3,6 @@
   assert: { that: "{{ item }} != '' " }
   with_items:
   - installation_folder
-  - temp_folder
 
 - name: stop the service
   shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
