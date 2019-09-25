@@ -63,6 +63,13 @@
     src: agent.varfile.j2
     dest: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
 
+# copy plist
+
+- name: copy selenium agent plist
+  template:
+    src: service.plist.j2
+    dest: "{{ service_plist_file_path }}"
+
 # external proxy
 
 - name: add external proxy
@@ -88,6 +95,9 @@
 - name: stop other service
   shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
   with_items:
+    - selenium_agent_server
+    - selenium_grid_node
+    - manual.*.jar
     - watch
     - safaridriver
   become: yes
@@ -166,19 +176,12 @@
   become_user: "{{ ansible_user_id }}"
   become: yes
 
-# INVESTIGATE do we need this?
-- name: enable safari driver
-  command: /usr/bin/safaridriver --enable
-  become: yes
-  ignore_errors: yes
-
-# copy plist
-
-- name: copy selenium agent plist
-  template:
-    src: service.plist.j2
-    dest: "{{ service_plist_file_path }}"
-    
+# ## INVESTIGATE do we need this?
+# - name: enable safari driver
+#   command: /usr/bin/safaridriver --enable
+#   become: yes
+#   ignore_errors: yes
+  
 # set permission to logs folder
 
 - name: set permissions for logs folder
@@ -196,6 +199,11 @@
     reboot_timeout: "{{ reboot_timeout | default(600) }}"
   become: yes
   when: reboot_after_install == True
+
+- name: wait for experi users profile get loaded
+  wait_for_connection:
+    delay: 60
+    timeout: 300
 
 # notify handlers
 

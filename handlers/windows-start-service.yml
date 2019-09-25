@@ -2,7 +2,7 @@
 # ## need to check if this required ?
 # - name: start the service (windows)
 #   win_shell: "{{ installation_folder }}\\{{ launcher_file_name }}"
-#   ignore_errors: True    
+#   ignore_errors: yes    
 #   become: yes
 
 - name: wait for service to start

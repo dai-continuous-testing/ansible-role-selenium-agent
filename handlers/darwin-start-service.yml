@@ -1,14 +1,14 @@
 
-## Need to check if this needed ?
-- name: launch selenium agent (mac)
-  command: "launchctl load {{ service_plist_file_path }}"
-  ignore_errors: yes
+# ## need to check if this required ?
+# - name: start the service (mac)
+#   command: "launchctl load {{ service_plist_file_path }}"
+#   ignore_errors: yes
 
 - name: wait for service to start
   health_check:
     url: "http://localhost:{{ health_check_port | default(server_port) }}{{ health_check_uri | default('/manage/info') }}"
     expected_status: "{{ health_check_status | default('200') }}"
-    max_retries: "{{ health_check_max_retries | default('30') }}"
+    max_retries: "{{ health_check_max_retries | default('60') }}"
 
 - name: get installed version from version.properties file
   slurp:
