@@ -8,6 +8,11 @@
   command: "launchctl unload {{ service_plist_file_path }}"
   ignore_errors: yes
 
+- name: remove temp files
+  file: 
+    path: "{{ service_plist_file_path }}"
+    state: absent
+
 - name: stop other service
   shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
   with_items:
