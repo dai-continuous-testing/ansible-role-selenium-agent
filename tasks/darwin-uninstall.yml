@@ -8,7 +8,7 @@
   command: "launchctl unload {{ service_plist_file_path }}"
   ignore_errors: yes
 
-- name: remove temp files
+- name: remove selenium agent plist
   file: 
     path: "{{ service_plist_file_path }}"
     state: absent
