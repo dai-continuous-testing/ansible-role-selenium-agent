@@ -33,6 +33,8 @@ use_external_proxy: False
 # external_proxy_user:
 # external_proxy_password:
 
+kill_notepad: False
+
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
 

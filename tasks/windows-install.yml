@@ -13,6 +13,7 @@
   - s3_download_url
   - extra_java_options
   - launcher_file_name
+  - kill_notepad
 
 # required dependencies
 
