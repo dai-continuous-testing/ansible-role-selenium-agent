@@ -5,9 +5,37 @@
   - installation_folder
   - temp_folder
 
+# stop service
+
+- name: kill the selenium agent server
+  win_shell: |
+    taskkill /F /IM selenium_agent_server.exe
+  register: killseleniumresults
+  changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
+  failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
+  become: yes
+
+- name: kill the selenium grid nodes
+  win_shell: |
+    taskkill /F /IM selenium_grid_node.exe
+  register: killgridresults
+  changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  become: yes
+
+# uninstall
+
+- name: check uninstall.exe exists
+  win_stat:
+    path: "{{ installation_folder }}\\uninstall.exe"
+  register: uninstaller_exists
+  become: yes
+
 - name: run uninstaller
   win_command: "{{ installation_folder }}\\uninstall.exe -q"
   become: yes
+  when: 
+    - uninstaller_exists.stat.exists
 
 - name: remove installation folder
   win_file: 
@@ -15,9 +43,21 @@
     state: absent
   become: yes
 
-- name: remove temp folder
+
+# disable ie proxy - temp. added until it get fixed from uninstall.exe
+
+- name: make sure temp folder exists
   win_file:
     path: "{{ temp_folder }}"
-    state: absent
-  when: clear_temp_folder | default('no') | bool
+    state: directory
+
+- name: copy ieproxy reg file
+  win_copy: 
+    src: disable_ieproxy.reg
+    dest: "{{ temp_folder }}\\disable_ieproxy.reg"
+  become: yes
+
+- name: disable ieproxy
+  win_regmerge:
+    path: "{{ temp_folder }}\\disable_ieproxy.reg"
   become: yes

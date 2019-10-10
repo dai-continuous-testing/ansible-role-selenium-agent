@@ -6,16 +6,34 @@ required_modifiable_fields:
   - installation_folder
 
 app_name: seleniumagent
-__app_version: 12.7.604
+__app_version: 12.8.680
 
 __server_port: 8080
 
 extra_java_options: []
 
+base_application_properties:
+  - "server.port": "{{ server_port }}"
+
+extra_application_properties: {}
+
+application_properties: "{{ base_application_properties | combine(extra_application_properties) }}"
+
 start_after_install: True
 
 clear_temp_folder: False
 clear_before_install: False
+reboot_after_install: True
+
+is_restrictive: False
+
+use_external_proxy: False
+# external_proxy_host:
+# external_proxy_port:
+# external_proxy_user:
+# external_proxy_password:
+
+kill_notepad: False
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
@@ -24,3 +42,5 @@ custom_download_url: ""
 
 cdn_name: "devops-artifacts.experitest.com"
 s3_download_url: "https://{{ cdn_name }}/{{ relative_path }}/{{ installer_file_name }}"
+
+health_check_uri: "/health"

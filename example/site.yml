@@ -2,3 +2,4 @@
 - hosts: selenium-agents
   roles:
     - role: selenium-agent
+      autologin_pass: myloginpassword       # required for windows selenium only

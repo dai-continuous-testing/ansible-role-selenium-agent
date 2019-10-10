@@ -3,35 +3,31 @@
   assert: { that: "{{ item }} != '' " }
   with_items:
   - installation_folder
-  - temp_folder
 
-- name: stop the service
-  block:
-
-    - name: get running processes
-      shell: "ps -ef | grep selenium_agent  | grep -v grep  | awk '{print $2}'"
-      register: running_processes  
-    
-    - name: print status of running processes
-      debug: 
-        msg: "{{ running_processes.stdout_lines }}"
-    
-    - name: kill running processes
-      shell: "sudo kill -9 {{ item }}"
-      loop: "{{ running_processes.stdout_lines }}"
-  
-  become: yes
+- name: stop selenium agent service
+  command: "launchctl unload {{ service_plist_file_path }}"
   ignore_errors: yes
 
-- name: remove the application folder
+- name: remove selenium agent plist
+  file: 
+    path: "{{ service_plist_file_path }}"
+    state: absent
+
+- name: stop other service
+  shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
+  with_items:
+    - selenium_agent_server
+    - selenium_grid_node
+    - manual.*.jar
+    - watch
+    - safaridriver
+  become: yes
+  changed_when: no
+  failed_when: no
+  ignore_errors: yes
+
+- name: remove installation folder
   file:
     path: "{{ installation_folder }}"
     state: absent
-  become: yes
-
-- name: remove temp folder
-  file:
-    path: "{{ temp_folder }}"
-    state: absent
-  when: clear_temp_folder | default('no') | bool
   become: yes

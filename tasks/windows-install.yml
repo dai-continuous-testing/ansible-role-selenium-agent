@@ -13,6 +13,7 @@
   - s3_download_url
   - extra_java_options
   - launcher_file_name
+  - kill_notepad
 
 # required dependencies
 
@@ -51,15 +52,62 @@
     src: agent.varfile.j2
     dest: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
 
+# external proxy
+
+- name: add external proxy
+  win_lineinfile:
+    path: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
+    line: "{{ item }}"
+    regexp: "^{{ item }}"
+  with_items:
+    - externalProxyHost={{ external_proxy_host }}
+    - externalProxyPort={{ external_proxy_port }}
+    - externalProxyUser={{ external_proxy_user }}
+    - externalProxyPassword={{ external_proxy_password }}
+  become: yes
+  when: use_external_proxy == True
+
+
 # stop old service
 
-- name: kill the old service
+- name: kill the old selenium agent server
   win_shell: |
-    taskkill /F /IM selenium_agent_server.exe /T
+    taskkill /F /IM selenium_agent_server.exe
   register: killseleniumresults
   changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   become: yes
+
+- name: kill the old selenium grid nodes
+  win_shell: |
+    taskkill /F /IM selenium_grid_node.exe
+  register: killgridresults
+  changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
+  become: yes
+
+# kill notepadd
+
+- name: kill notepad apps
+  block:
+    - name: kill notepad
+      win_shell: |
+        taskkill /F /IM notepad.exe
+      register: killnotepad
+      changed_when: killnotepad.rc == 0 and 'The process "notepad.exe" not found.' not in killnotepad.stderr
+      failed_when: killnotepad.rc != 0 and 'The process "notepad.exe" not found.' not in killnotepad.stderr
+      become: yes
+
+    - name: kill notepad++
+      win_shell: |
+        taskkill /F /IM notepad++.exe
+      register: killnotepadplusplus
+      changed_when: killnotepadplusplus.rc == 0 and 'The process "notepad++.exe" not found.' not in killnotepadplusplus.stderr
+      failed_when: killnotepadplusplus.rc != 0 and 'The process "notepad++.exe" not found.' not in killnotepadplusplus.stderr
+      become: yes
+
+  when: kill_notepad == True
+  ignore_errors: yes
 
 # delete old installation (optional)
 
@@ -78,8 +126,8 @@
   become: yes
 
 - name: run the installer
-  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 180"
-  async: 180
+  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 300"
+  async: 300
   poll: 0
   register: installer_sync
   become: yes
@@ -89,7 +137,7 @@
     jid: "{{ installer_sync.ansible_job_id }}"
   register: wait_for_installer
   until: wait_for_installer.finished
-  retries: 18
+  retries: 30
   delay: 10 
   ignore_errors: yes
 
@@ -109,6 +157,14 @@
 
 # configure installed
 
+- name: update application properties file
+  win_lineinfile:
+    path: "{{ installation_folder }}\\config\\application.properties"
+    line: "{{ item.key }}={{ item.value }}"
+    regexp: "^{{ item.key | replace('.', '\\.') }}="
+  with_dict: "{{ application_properties }}"
+  become: yes
+
 - name: update vmoptions file
   win_lineinfile:
     path: "{{ installation_folder }}\\selenium_agent_server.vmoptions"
@@ -116,6 +172,21 @@
     regexp: "^{{ item }}"
   with_items: "{{ extra_java_options }}"
   become: yes
+
+# reboot selenium agent
+
+- name: reboot selenium agent
+  win_reboot:
+    reboot_timeout: "{{ reboot_timeout | default(600) }}"
+  become: yes
+  when: reboot_after_install == True
+
+# notify handlers
+
+- name: notify handlers
+  win_shell: "echo notify handlers"
+  notify:
+    - start the service
 
 # expose role output
 
