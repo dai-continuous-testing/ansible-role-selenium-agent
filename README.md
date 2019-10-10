@@ -16,7 +16,7 @@ Role Variables
 | state | should the application be present or absent | present, absent | present | no |
 | app_version | application version to install | string | 12.8.680 | no |
 | server_port | port number for the server | number | 8080 | no |
-| autologin_pass | password for auto login | strings |  | yes |
+| autologin_pass | password for auto login (required for windows) | strings |  | yes |
 | extra_application_properties | additional props to be override in application.properties file | dict | {} | no |
 | extra_java_options | extand java options | array of strings | [] | no |
 | installation_folder | the folder in which the applcation will be installed | string | for mac: ~/SeleniumAgent <br> for windows: ~\\SeleniumAgent  | no |

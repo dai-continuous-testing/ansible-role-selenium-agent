@@ -21,6 +21,8 @@ actions are required:
 - *export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES*
 
 ## mac target
+Only supports selenium upgrades.
+
 
 ### make sure to add:
     export PATH="/usr/local/bin:$PATH" >> ~/.bashrc
