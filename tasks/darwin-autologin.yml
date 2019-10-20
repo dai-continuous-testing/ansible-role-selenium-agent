@@ -78,7 +78,7 @@
         name:  kcpassword
 
     - name: run the autologin util
-      command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_pass }}"
+      command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_password | default(ansible_password) }}"
 
 - name: reboot the machine
   reboot:
