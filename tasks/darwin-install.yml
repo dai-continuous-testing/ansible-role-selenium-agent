@@ -63,12 +63,12 @@
     src: agent.varfile.j2
     dest: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
 
-# copy plist
-
-- name: copy selenium agent plist
-  template:
-    src: service.plist.j2
-    dest: "{{ service_plist_file_path }}"
+# # copy plist  - not required
+# 
+# - name: copy selenium agent plist
+#   template:
+#     src: service.plist.j2
+#     dest: "{{ service_plist_file_path }}"
 
 # external proxy
 
