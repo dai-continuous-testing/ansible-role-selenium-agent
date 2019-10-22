@@ -9,3 +9,5 @@ installer_file_name: "selenium_agent_windows-x64_{{ sel_app_version }}.exe"
 relative_path: "selenium-agent/windows"
 
 launcher_file_name: "selenium_agent_launcher.vbs"
+
+enable_autologin: True
