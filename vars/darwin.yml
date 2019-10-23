@@ -13,3 +13,5 @@ installer_file_name: "selenium_agent_macos_{{ sel_app_version }}.dmg"
 relative_path: "selenium-agent/osx"
 
 launcher_file_name: "selenium_agent_server"
+
+enable_autologin: False
