@@ -173,6 +173,13 @@
   with_items: "{{ extra_java_options }}"
   become: yes
 
+# enable selenium IE - protected mode
+
+- name: run ie setup for selenium
+  win_regmerge:
+    path: "{{ installation_folder }}\\drivers\\ie_setup_for_selenium.reg"
+  become: yes
+
 # reboot selenium agent
 
 - name: reboot selenium agent
