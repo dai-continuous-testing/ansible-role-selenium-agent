@@ -27,6 +27,14 @@ Only supports selenium upgrades.
 ### make sure to add:
     export PATH="/usr/local/bin:$PATH" >> ~/.bashrc
 
+### mojave:
+
+For mojave after reboot of the first upgrade, during the user loading we need to allow the system event pop-up for selenium.sh script
+
+### catalina:
+
+For catalina after first upgrade we need to allow the Java pop-up, and as well to go to 'Security & Privacy' and to allow Java in the following 3 places - screen recording, full disk access, accessibility (same as doing in first installation via Install4j)
+
 ## windows target
 run the bootstrap.ps1 script in the target machine\
 NOTE:\
