@@ -1,7 +1,8 @@
 Experitest - Selenium Agent ansible role
 =========
 
-This role will install \ uninstall selenium agent for windows and mac os hosts
+This role will install \ uninstall selenium agent for windows. <br>
+For mac, currently it only supports selenium agent upgrade.
 
 Requirements
 ------------
@@ -37,3 +38,20 @@ Example Playbook
 ----------------
 
 #### [see working example](/example)
+
+<br>
+
+Known issues
+------------
+
+### mojave:
+
+- For mojave after reboot of the first upgrade, during the user loading we need to allow the system event pop-up for selenium.sh script
+
+### catalina:
+
+- For catalina after first upgrade we need to allow the Java pop-up, and as well to go to 'Security & Privacy' and to allow Java in the following 3 places - screen recording, full disk access, accessibility (same as doing in first installation via Install4j)
+
+### windows:
+
+- After windows updates sometimes winrm service get stopped and reset, To fix winrm reset issues, run [ansible-role-winrm-startup](https://github.com/ExperitestOfficial/ansible-role-winrm-startup) role on all windows machines once.
