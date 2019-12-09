@@ -198,7 +198,7 @@
   file:
     path: "{{ installation_folder }}/logs"
     state: directory
-    mode: 0777
+    mode: '0777'
     owner: "{{ ansible_user_id }}"
   become: yes
 

@@ -8,82 +8,26 @@
 
 # required dependencies
 
-- name: check if brew is installed
-  stat:
-    path: /usr/local/bin/brew
-  register: brew_result
-
-- name: fail if brew not installed
-  fail: 
-    msg: brew is not installed or didn't found on path /usr/local/bin/brew
-  when: brew_result.stat.exists == False
- 
-# autologin
-
-- name: detect login state
-  block:
-    
-    - name: make sure launchagent folder exist
-      file: 
-        path: "/Users/{{ ansible_user_id }}/Library/LaunchAgents"
-        state: directory
-        owner: "{{ ansible_user_id }}"
-      become: yes
-
-    - name: make sure main file exists
-      copy:
-        content: |
-          #! /bin/sh
-          date +%s
-        dest: ~/logon-test.sh
-    
-    - name: add launch agent
-      copy: 
-        src: logon-test.plist
-        dest: ~/Library/LaunchAgents/com.experitest.logon-test.plist
-
-    - name: launch the agent
-      command: launchctl load ~/Library/LaunchAgents/com.experitest.logon-test.plist
-      changed_when: no
-      failed_when: no
-      register: load_result
-
-    - name: set logged in fact
-      set_fact:
-        user_logged_in: "{{ load_result.rc == 0 }}"
-
-  always:
-
-    - name: unload launch agent
-      command: launchctl unload ~/Library/LaunchAgents/com.experitest.logon-test.plist
-      changed_when: no
-      ignore_errors: yes
-
-    - name: remove temp files
-      file: 
-        path: "{{ item }}"
-        state: absent
-      with_items:
-        - ~/Library/LaunchAgents/com.experitest.logon-test.plist
-
-- name: set autologin
-  block:
-
-    - name: tap to kcpassword
-      homebrew_tap:
-        name:  xfreebird/utils
-
-    - name: install kcpassword
-      homebrew:
-        name:  kcpassword
-
-    - name: run the autologin util
-      command: enable_autologin "{{ autologin_user | default(ansible_user_id) }}" "{{ autologin_password | default(ansible_password) }}"
-
-- name: reboot the machine
-  reboot:
-    reboot_timeout: "{{ reboot_timeout | default(600) }}"
+- name: make sure temp folder exists
+  file:
+    path: "{{ temp_folder }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
   become: yes
-  when:
-    - not user_logged_in
-    - avoid_reboot | default('yes') | bool
+ 
+# copy files to scipts folder
+
+- name: copy autologin files to temp folder
+  copy:
+    src: "{{ item }}"
+    dest: "{{ temp_folder }}"
+    mode: '0777'
+  with_items:
+    ['enable_autologin','kcpassword']
+
+# enable autologin
+
+- name: enable autologin
+  command:  "sudo /bin/sh enable_autologin {{ ansible_user_id }} {{ autologin_pass }}"
+  args:
+    chdir: "{{ temp_folder }}"
