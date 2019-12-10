@@ -52,6 +52,10 @@ Known issues
 
 - For catalina after first upgrade we need to allow the Java pop-up, and as well to go to 'Security & Privacy' and to allow Java in the following 3 places - screen recording, full disk access, accessibility (same as doing in first installation via Install4j)
 
+### mac:
+
+- make sure the deployment user should have sudo permissions with 'NOPASSWD: ALL' privileges.
+
 ### windows:
 
 - After windows updates sometimes winrm service get stopped and reset, To fix winrm reset issues, run [ansible-role-winrm-startup](https://github.com/ExperitestOfficial/ansible-role-winrm-startup) role on all windows machines once.
