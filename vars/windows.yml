@@ -2,6 +2,8 @@
 
 __installation_folder: "{{ ansible_user_dir }}\\SeleniumAgent"
 
+__installer_checksum: "{{ windows_installer_checksum }}"
+
 temp_folder: "c:\\temp\\experitest"
 
 installer_file_name: "selenium_agent_windows-x64_{{ sel_app_version }}.exe"

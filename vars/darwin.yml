@@ -2,6 +2,8 @@
 
 __installation_folder: "{{ ansible_user_dir }}/SeleniumAgent"
 
+__installer_checksum: "{{ darwin_installer_checksum }}"
+
 temp_folder: "/var/tmp/experitest"
 
 service_name: "com.experitest.{{ app_name }}"

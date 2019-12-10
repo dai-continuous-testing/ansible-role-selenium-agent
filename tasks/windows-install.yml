@@ -14,6 +14,7 @@
   - extra_java_options
   - launcher_file_name
   - kill_notepad
+  - installer_checksum
 
 # required dependencies
 
@@ -30,7 +31,7 @@
 - name: validate checksum and download zip from s3 url
   win_get_url:
     url: "{{ s3_download_url }}"
-    checksum: "{{ lookup('url', s3_download_url + '.sha256') }}"
+    checksum: "{{ installer_checksum }}"
     checksum_algorithm: sha256
     dest: "{{ temp_folder }}\\{{ installer_file_name }}"
     timeout: "{{ download_timeout | default(60) }}"
@@ -41,7 +42,7 @@
 - name: validate checksum and download zip from custom url
   win_get_url:
     url: "{{ custom_download_url }}"
-    checksum: "{{ lookup('url', custom_download_url + '.sha256') }}"
+    checksum: "{{ installer_checksum }}"
     checksum_algorithm: sha256
     dest: "{{ temp_folder }}\\{{ installer_file_name }}"
     timeout: "{{ download_timeout | default(60) }}"
