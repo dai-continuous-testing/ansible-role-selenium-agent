@@ -29,7 +29,7 @@ Role Variables
 | clear_before_install | removing old installation before installing new version | boolean | False | no |
 | kill_notepad | kill notepad/notepadd++ apps on windows | boolean | False | no |
 | is_restrictive | enable restrictive mode for selenium browsers | boolean | False | no |
-| tunneling_enabled | enable tunneling mode for selenium browsers | boolean | True | no |
+| enable_tunneling | enable or disable selenium browsers proxy | boolean | True | no |
 | use_external_proxy | enable external proxy for selenium browsers | boolean | False | no |
 | external_proxy_host | when use_external_proxy is True, set proxy hostname or ip  | string |  | no |
 | external_proxy_port | when use_external_proxy is True, set proxy port | number |  | no |

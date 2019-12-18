@@ -72,22 +72,16 @@
 
 # external proxy
 
-# # need to check on this
-# - name: enable external proxy when tunneling is enabled
-#   set_fact:
-#     use_external_proxy: True
-#   when: tunneling_enabled == True
-
 - name: add external proxy
   lineinfile:
     path: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
     line: "{{ item }}"
     regexp: "^{{ item }}"
   with_items:
-    - externalProxyHost={{ external_proxy_host | defult('localhost') }}
-    - externalProxyPort={{ external_proxy_port | defult('8080') }}
-    - externalProxyUser={{ external_proxy_user | defult('') }}
-    - externalProxyPassword={{ external_proxy_password | defult('') }}
+    - externalProxyHost={{ external_proxy_host | default('localhost') }}
+    - externalProxyPort={{ external_proxy_port | default('8080') }}
+    - externalProxyUser={{ external_proxy_user | default('') }}
+    - externalProxyPassword={{ external_proxy_password | default('') }}
   become: yes
   when: use_external_proxy == True
 
