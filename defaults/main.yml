@@ -6,7 +6,7 @@ required_modifiable_fields:
   - installation_folder
 
 app_name: seleniumagent
-__app_version: 12.10.739
+__app_version: 12.12.793
 
 __server_port: 8080
 
@@ -19,6 +19,10 @@ extra_application_properties: {}
 
 application_properties: "{{ base_application_properties | combine(extra_application_properties) }}"
 
+extra_logback_properties: {}
+
+logback_properties: "{{ extra_logback_properties }}"
+
 start_after_install: True
 
 clear_temp_folder: False
@@ -26,6 +30,8 @@ clear_before_install: False
 reboot_after_install: True
 
 is_restrictive: False
+
+tunneling_enabled: True
 
 use_external_proxy: False
 # external_proxy_host:
