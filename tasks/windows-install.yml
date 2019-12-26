@@ -188,6 +188,20 @@
     path: "{{ installation_folder }}\\drivers\\ie_setup_for_selenium.reg"
   become: yes
 
+# enable / disable proxy tunneling
+
+- name: enable proxy tunneling if true
+  win_regmerge:
+    path: "{{ installation_folder }}\\bin\\proxy-enable.reg"
+  become: yes
+  when: enable_tunneling == True
+
+- name: disable proxy tunneling if false
+  win_regmerge:
+    path: "{{ installation_folder }}\\bin\\proxy-disable.reg"
+  become: yes
+  when: enable_tunneling == False
+
 # reboot selenium agent
 
 - name: reboot selenium agent
