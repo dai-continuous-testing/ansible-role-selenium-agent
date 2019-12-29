@@ -210,6 +210,22 @@
     owner: "{{ ansible_user_id }}"
   become: yes
 
+# enable / disable proxy tunneling
+
+- name: enable proxy tunneling if true
+  command: "{{ item }}"
+  with_items:
+    - sudo /usr/sbin/networksetup -setwebproxystate Ethernet on
+    - sudo /usr/sbin/networksetup -setsecurewebproxystate Ethernet on
+  when: enable_tunneling == True
+
+- name: disable proxy tunneling if false
+  command: "{{ item }}"
+  with_items:
+    - sudo /usr/sbin/networksetup -setwebproxystate Ethernet off
+    - sudo /usr/sbin/networksetup -setsecurewebproxystate Ethernet off
+  when: enable_tunneling == False
+
 # reboot selenium agent
 
 - name: reboot selenium agent
