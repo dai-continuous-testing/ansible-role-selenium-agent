@@ -257,3 +257,4 @@
     "{{ sanitize_role_name }}":
       server_port: "{{ server_port }}"
       installation_folder: "{{ installation_folder }}"
+      service_plist_file_path: "{{ service_plist_file_path }}"
