@@ -6,7 +6,11 @@ required_modifiable_fields:
   - installation_folder
 
 app_name: seleniumagent
+<<<<<<< HEAD
 __app_version: 20.1.801
+=======
+__app_version: 12.12.817
+>>>>>>> 0d5cca73f18a1d0c375f93c8eda1a5434cc0c706
 
 __server_port: 8080
 
