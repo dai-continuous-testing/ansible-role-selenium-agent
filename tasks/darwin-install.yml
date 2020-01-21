@@ -152,7 +152,7 @@
       ignore_errors: yes
 
     - name: attach new disk
-      command: "hdiutil attach {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.dmg }}"
+      command: "hdiutil attach {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.dmg"
 
   become: yes
 
