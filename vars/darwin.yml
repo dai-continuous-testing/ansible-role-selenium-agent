@@ -8,7 +8,7 @@ service_name: "com.experitest.{{ app_name }}"
 
 service_plist_file_path: "~/Library/LaunchAgents/{{ service_name }}.plist"
 
-installer_file_name: "selenium_agent_macos_{{ sel_app_version }}.zip"
+installer_file_name: "selenium_agent_macos_{{ sel_app_version }}.dmg"
 
 relative_path: "selenium-agent/osx"
 
