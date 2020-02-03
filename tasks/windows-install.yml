@@ -138,7 +138,7 @@
   register: wait_for_installer
   until: wait_for_installer.finished
   retries: 30
-  delay: 10 
+  delay: 10
   ignore_errors: yes
 
 - name: fail when error is not disconnection
@@ -146,7 +146,7 @@
     msg: "unrecognized error {{ wait_for_installer.msg }}"
   when:
     - wait_for_installer is failed
-    - wait_for_installer.msg != 'Unexpected failure during module execution.'
+#    - wait_for_installer.msg != 'Unexpected failure during module execution.'
 
 - name: make sure machine is reachable
   wait_for_connection:
