@@ -100,8 +100,15 @@
 # stop old service
 
 - name: stop selenium agent service
-  command: "launchctl unload {{ service_plist_file_path }}"
+  shell: "/bin/kill $(ps -ef | grep selenium_agent_server | grep -v grep | awk '{print $2}' | xargs)"
+  become: yes
+  changed_when: no
+  failed_when: no
   ignore_errors: yes
+
+- name: wait for 10 seconds
+  pause:
+    seconds: 10
 
   ## need to check weather it requires to stop ?
 - name: stop other service
