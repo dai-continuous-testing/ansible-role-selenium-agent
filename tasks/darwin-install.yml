@@ -106,9 +106,11 @@
   failed_when: no
   ignore_errors: yes
 
-- name: wait for 10 seconds
-  pause:
-    seconds: 10
+
+# - name: wait for 10 seconds
+#   pause:
+#     seconds: 10
+
 
   ## need to check weather it requires to stop ?
 - name: stop other service
