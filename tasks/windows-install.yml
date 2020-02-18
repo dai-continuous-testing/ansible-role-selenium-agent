@@ -194,13 +194,13 @@
   win_regmerge:
     path: "{{ installation_folder }}\\bin\\proxy-enable.reg"
   become: yes
-  when: enable_tunneling == True
+  when: enable_tunneling
 
 - name: disable proxy tunneling if false
   win_regmerge:
     path: "{{ installation_folder }}\\bin\\proxy-disable.reg"
   become: yes
-  when: enable_tunneling == False
+  when: not enable_tunneling
 
 # reboot selenium agent
 

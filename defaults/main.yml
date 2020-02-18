@@ -31,7 +31,7 @@ reboot_after_install: True
 
 is_restrictive: False
 
-enable_tunneling: True
+enable_tunneling: true
 
 use_external_proxy: False
 # external_proxy_host:

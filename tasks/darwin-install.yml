@@ -238,14 +238,14 @@
   with_items:
     - sudo /usr/sbin/networksetup -setwebproxystate Ethernet on
     - sudo /usr/sbin/networksetup -setsecurewebproxystate Ethernet on
-  when: enable_tunneling == True
+  when: enable_tunneling
 
 - name: disable proxy tunneling if false
   command: "{{ item }}"
   with_items:
     - sudo /usr/sbin/networksetup -setwebproxystate Ethernet off
     - sudo /usr/sbin/networksetup -setsecurewebproxystate Ethernet off
-  when: enable_tunneling == False
+  when: not enable_tunneling
 
 # reboot selenium agent
 
