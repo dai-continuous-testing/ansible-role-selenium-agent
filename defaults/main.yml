@@ -41,9 +41,6 @@ use_external_proxy: False
 
 kill_notepad: False
 
-split_ver: "{{ app_version.split('.') }}"
-sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
-
 custom_download_url: ""
 
 cdn_name: "devops-artifacts.experitest.com"
