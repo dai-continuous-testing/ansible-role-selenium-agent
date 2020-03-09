@@ -11,3 +11,6 @@ relative_path: "selenium-agent/windows"
 launcher_file_name: "selenium_agent_launcher.vbs"
 
 enable_autologin: True
+
+split_ver: "{{ app_version.split('.') }}"
+sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
