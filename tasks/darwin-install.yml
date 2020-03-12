@@ -10,6 +10,7 @@
   - clear_before_install
   - server_port
   - installer_file_name
+  - dmg_installer_file_name
   - s3_download_url
   - extra_java_options
   - launcher_file_name
@@ -64,7 +65,7 @@
     src: "{{ temp_folder }}/{{ installer_file_name }}"
     dest: "{{ temp_folder }}"
     remote_src: yes
-    creates: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.dmg"
+    creates: "{{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.dmg"
     owner: "{{ ansible_user_id }}"
   become: yes
 
@@ -73,7 +74,7 @@
 - name: copy var file
   template:
     src: agent.varfile.j2
-    dest: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
+    dest: "{{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile"
 
 # # copy plist  - not required
 # 
@@ -86,7 +87,7 @@
 
 - name: add external proxy
   lineinfile:
-    path: "{{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile"
+    path: "{{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile"
     line: "{{ item }}"
     regexp: "^{{ item }}"
   with_items:
@@ -161,7 +162,7 @@
       ignore_errors: yes
 
     - name: attach new disk
-      command: "hdiutil attach {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.dmg"
+      command: "hdiutil attach {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.dmg"
 
   become: yes
 
@@ -172,7 +173,7 @@
   register: ram_command
 
 - name: starting silent Installation
-  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log"
+  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub  -q -varfile {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log"
   environment:
     SELENIUM_RAM: "{{ ram_command.stdout }}"
   args:
