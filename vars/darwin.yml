@@ -9,6 +9,7 @@ service_name: "com.experitest.{{ app_name }}"
 service_plist_file_path: "~/Library/LaunchAgents/{{ service_name }}.plist"
 
 installer_file_name: "selenium_agent_macos_{{ sel_app_version }}.zip"
+dmg_installer_file_name: "selenium_agent_macos_{{ dmg_sel_app_version }}.dmg"
 
 relative_path: "selenium-agent/osx"
 
@@ -18,3 +19,4 @@ enable_autologin: False
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}.{{ split_ver[1] }}.{{ split_ver[2] }}"
+dmg_sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
