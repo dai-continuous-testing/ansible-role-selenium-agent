@@ -61,3 +61,4 @@ Known issues
 ### windows:
 
 - After windows updates sometimes winrm service get stopped and reset, To fix winrm reset issues, run [ansible-role-winrm-startup](https://github.com/ExperitestOfficial/ansible-role-winrm-startup) role on all windows machines once.
+- currently its causing error with parallel windows selenium deployment, recommended to run one at a time or add "serial: 1" flag in playbook to deploy multiple selenium windows.
