@@ -15,7 +15,7 @@ relative_path: "selenium-agent/osx"
 
 launcher_file_name: "selenium_agent_server"
 
-enable_autologin: False
+enable_autologin: True
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}.{{ split_ver[1] }}.{{ split_ver[2] }}"
