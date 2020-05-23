@@ -35,6 +35,8 @@ Role Variables
 | external_proxy_port | when use_external_proxy is True, set proxy port | number |  | no |
 | external_proxy_user | when use_external_proxy is True, set proxy user | string |  | no |
 | external_proxy_password | when use_external_proxy is True, set proxy password | string |  | no |
+| custom_download_username | username to download from custom url on windows | string |  | no |
+| custom_download_password | password to download from custom url on windows | string |  | no |
 
 Example Playbook
 ----------------

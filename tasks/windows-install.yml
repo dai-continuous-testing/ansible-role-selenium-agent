@@ -42,6 +42,9 @@
     dest: "{{ temp_folder }}\\{{ installer_file_name }}"
     timeout: "{{ download_timeout | default(60) }}"
     force: no
+    force_basic_auth: yes
+    url_username: "{{ custom_download_username }}"
+    url_password: "{{ custom_download_password }}"
     use_proxy: "{{ download_use_proxy | default('no') }}"
   when: custom_download_url != ""
 
