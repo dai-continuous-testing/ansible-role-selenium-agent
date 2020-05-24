@@ -4,6 +4,8 @@ required_modifiable_fields:
   - app_version
   - server_port
   - installation_folder
+  - custom_download_username
+  - custom_download_password
 
 app_name: seleniumagent
 __app_version: 20.1.801

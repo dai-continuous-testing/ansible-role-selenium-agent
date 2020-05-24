@@ -14,3 +14,6 @@ enable_autologin: True
 
 split_ver: "{{ app_version.split('.') }}"
 sel_app_version: "{{ split_ver[0] }}_{{ split_ver[1] }}_{{ split_ver[2] }}"
+
+__custom_download_username: "myuser"
+__custom_download_password: "mypassword"
