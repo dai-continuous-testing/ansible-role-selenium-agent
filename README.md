@@ -23,6 +23,8 @@ Role Variables
 | extra_java_options | extand java options | array of strings | [] | no |
 | installation_folder | the folder in which the applcation will be installed | string | for mac: ~/SeleniumAgent <br> for windows: ~\\SeleniumAgent  | no |
 | custom_download_url | custom url to download the installation from (exe or dmg format) | string |  | no |
+| custom_download_username | username to download from custom url on windows | string |  | no |
+| custom_download_password | password to download from custom url on windows | string |  | no |
 | reboot_after_install | should system reboot after installation is completed | boolean | True | no |
 | start_after_install | should application start after installation is completed | boolean | True | no |
 | clear_temp_folder | remove temp folder after installation | boolean | False | no |
@@ -35,8 +37,6 @@ Role Variables
 | external_proxy_port | when use_external_proxy is True, set proxy port | number |  | no |
 | external_proxy_user | when use_external_proxy is True, set proxy user | string |  | no |
 | external_proxy_password | when use_external_proxy is True, set proxy password | string |  | no |
-| custom_download_username | username to download from custom url on windows | string |  | no |
-| custom_download_password | password to download from custom url on windows | string |  | no |
 
 Example Playbook
 ----------------
