@@ -191,6 +191,7 @@
   until: wait_for_installer.finished
   retries: 30
   delay: 10
+  become: yes
 
 # stop service
 
