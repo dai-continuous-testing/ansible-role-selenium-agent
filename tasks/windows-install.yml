@@ -27,26 +27,39 @@
 
 # download the file
 
-- name: download from s3 url
-  win_get_url:
-    url: "{{ s3_download_url }}"
-    dest: "{{ temp_folder }}\\{{ installer_file_name }}"
-    timeout: "{{ download_timeout | default(60) }}"
-    force: no
-    use_proxy: "{{ download_use_proxy | default('no') }}"
-  when: custom_download_url == ""
+- name: download from internet
+  block:
 
-- name: download from custom url
-  win_get_url:
-    url: "{{ custom_download_url }}"
-    dest: "{{ temp_folder }}\\{{ installer_file_name }}"
-    timeout: "{{ download_timeout | default(60) }}"
-    force: no
-    force_basic_auth: yes
-    url_username: "{{ custom_download_username }}"
-    url_password: "{{ custom_download_password }}"
-    use_proxy: "{{ download_use_proxy | default('no') }}"
-  when: custom_download_url != ""
+    - name: download from s3 url
+      win_get_url:
+        url: "{{ s3_download_url }}"
+        dest: "{{ temp_folder }}\\{{ installer_file_name }}"
+        timeout: "{{ download_timeout | default(60) }}"
+        force: no
+        use_proxy: "{{ download_use_proxy | default('no') }}"
+      when: custom_download_url == ""
+    
+    - name: download from custom url
+      win_get_url:
+        url: "{{ custom_download_url }}"
+        dest: "{{ temp_folder }}\\{{ installer_file_name }}"
+        timeout: "{{ download_timeout | default(60) }}"
+        force: no
+        force_basic_auth: yes
+        url_username: "{{ custom_download_username }}"
+        url_password: "{{ custom_download_password }}"
+        use_proxy: "{{ download_use_proxy | default('no') }}"
+      when: custom_download_url != ""
+
+  when: deployment_mode == "online"
+
+- name: download from shared storage folder
+  copy:
+    src: "{{ shared_storage_folder }}/{{ relative_path }}/{{ installer_file_name }}"
+    dest: "{{ temp_folder }}/{{ installer_file_name }}"
+    remote_src: no
+  when: deployment_mode == "offline"
+
 
 # copy var file
 
