@@ -10,7 +10,7 @@ required_modifiable_fields:
   - shared_storage_folder
 
 app_name: seleniumagent
-__app_version: 20.1.801
+__app_version: 20.1.891
 
 __server_port: 8080
 
