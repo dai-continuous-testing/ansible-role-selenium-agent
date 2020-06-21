@@ -37,6 +37,9 @@ Role Variables
 | external_proxy_port | when use_external_proxy is True, set proxy port | number |  | no |
 | external_proxy_user | when use_external_proxy is True, set proxy user | string |  | no |
 | external_proxy_password | when use_external_proxy is True, set proxy password | string |  | no |
+| deployment_mode | installation will be online or offline | online, offline | online | no |
+| shared_storage_folder | should be path of your shared storage to copy installers and common packages, when deployment_mode is offline | string | "" | when deployment_mode set to offline |
+
 
 Example Playbook
 ----------------

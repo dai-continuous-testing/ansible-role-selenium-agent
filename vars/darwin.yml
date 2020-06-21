@@ -1,6 +1,7 @@
 ---
 
 __installation_folder: "{{ ansible_user_dir }}/SeleniumAgent"
+__shared_storage_folder: ""
 
 temp_folder: "/var/tmp/experitest"
 
