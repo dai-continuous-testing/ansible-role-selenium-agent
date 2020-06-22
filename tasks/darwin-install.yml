@@ -181,7 +181,7 @@
   async: 300
   poll: 0
   register: installer_sync
-# become_user: "{{ ansible_user_id }}"
+  become_user: "{{ ansible_user_id }}"
   become: yes
 
 - name: wait for installer
@@ -191,7 +191,7 @@
   until: wait_for_installer.finished
   retries: 30
   delay: 10
-# become_user: "{{ ansible_user_id }}"
+  become_user: "{{ ansible_user_id }}"
   become: yes
 
 # stop service
