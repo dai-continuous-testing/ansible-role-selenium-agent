@@ -54,9 +54,9 @@
   when: deployment_mode == "online"
 
 - name: download from shared storage folder
-  copy:
+  win_copy:
     src: "{{ shared_storage_folder }}/{{ relative_path }}/{{ installer_file_name }}"
-    dest: "{{ temp_folder }}/{{ installer_file_name }}"
+    dest: "{{ temp_folder }}\\{{ installer_file_name }}"
     remote_src: no
   when: deployment_mode == "offline"
 
