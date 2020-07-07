@@ -25,6 +25,15 @@
   with_items:
     ['enable_autologin','kcpassword']
 
+# fix CR for osx
+
+- name: change the carrige return to osx style
+  shell: "tr '\n' '\r' < {{ item }} > {{ item }}1 && mv {{ item }}1 {{ item }} && chmod 777 *"
+  args:
+    chdir: "{{ temp_folder }}"
+  with_items:
+    ['enable_autologin','kcpassword']
+
 # enable autologin
 
 - name: enable autologin
