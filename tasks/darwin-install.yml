@@ -193,6 +193,19 @@
   delay: 10
   become_user: "{{ ansible_user_id }}"
   become: yes
+  ignore_errors: yes
+
+- name: check the Installation logs
+  shell: "tail -1 {{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log | awk {'print $1'}"
+  args:
+    executable: /bin/bash
+  register: readlogs
+  become: yes
+
+- assert:
+    success_msg: "Installation completed successfully"
+    fail_msg: "Failed: not found Finished status in {{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log file"
+    that: readlogs.stdout == "Finished"
 
 # stop service
 
