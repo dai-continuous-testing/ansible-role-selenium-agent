@@ -28,9 +28,11 @@
 # fix CR for osx
 
 - name: change the carrige return to osx style
-  shell: "tr '\n' '\r' < {{ item }} > {{ item }}1 && mv {{ item }}1 {{ item }} && chmod 777 *"
-  args:
-    chdir: "{{ temp_folder }}"
+  replace:
+    path: "{{ temp_folder }}/{{item}}"
+    regexp: "\r"
+    replace: "\n"
+    mode: '0777'
   with_items:
     ['enable_autologin','kcpassword']
 
