@@ -173,7 +173,7 @@
   register: ram_command
 
 - name: starting silent Installation
-  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub -q -varfile {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log"
+  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub -q -varfile {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log -Dinstall4j.keepLog=true"
   environment:
     SELENIUM_RAM: "{{ ram_command.stdout }}"
   args:
