@@ -168,6 +168,13 @@
 
 # start installation
 
+- name: make sure installation logs folder exists
+  file:
+    path: "{{ temp_folder }}/installation-logs"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
 - name: get machine ram
   command: /usr/sbin/sysctl -n hw.memsize
   register: ram_command
