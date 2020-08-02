@@ -168,12 +168,19 @@
 
 # start installation
 
+- name: make sure installation logs folder exists
+  file:
+    path: "{{ temp_folder }}/installation-logs"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+  become: yes
+
 - name: get machine ram
   command: /usr/sbin/sysctl -n hw.memsize
   register: ram_command
 
 - name: starting silent Installation
-  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub -q -varfile {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log"
+  shell: "/Volumes/selenium_agent/SeeTest\\ Selenium\\ Agent\\ Installer.app/Contents/MacOS/JavaApplicationStub -q -varfile {{ temp_folder }}/{{ (dmg_installer_file_name | splitext)[0] }}.varfile -Dinstall4j.alternativeLogfile={{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log -Dinstall4j.keepLog=true"
   environment:
     SELENIUM_RAM: "{{ ram_command.stdout }}"
   args:
@@ -191,6 +198,21 @@
   until: wait_for_installer.finished
   retries: 30
   delay: 10
+  become_user: "{{ ansible_user_id }}"
+  become: yes
+  ignore_errors: yes
+
+- name: check the Installation logs
+  shell: "tail -1 {{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log | awk {'print $1'}"
+  args:
+    executable: /bin/bash
+  register: readlogs
+  become: yes
+
+- assert:
+    success_msg: "Installation completed successfully"
+    fail_msg: "Failed: not found Finished status in {{ temp_folder }}/installation-logs/{{ ansible_date_time.epoch }}.log file"
+    that: readlogs.stdout == "Finished"
 
 # stop service
 
