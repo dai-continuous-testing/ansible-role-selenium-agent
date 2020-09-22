@@ -31,7 +31,7 @@ clear_temp_folder: False
 clear_before_install: False
 reboot_after_install: True
 
-is_restrictive: False
+is_restrictive: true
 
 enable_tunneling: true
 
