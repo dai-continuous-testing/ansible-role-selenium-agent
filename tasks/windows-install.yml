@@ -120,6 +120,24 @@
     state: absent
   when: clear_before_install == True
 
+
+# check if server.varfile already exists
+- name: check if the server.varfile exists
+  win_stat:
+    path: "{{ installation_folder }}\\.install4j\\server.varfile"
+  register: server_varfile
+
+# copy varfile to server.varfile
+- name: copy installer varfile to server.varfile
+  win_copy:
+    src: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
+    dest: "{{ installation_folder }}\\.install4j\\server.varfile"
+    mode: 0644
+    force: yes
+    remote_src: yes
+  become: yes
+  when: server_varfile.stat.exists
+
 # unpack all the files and run the installer
 
 - name: make sure installation folder exists
