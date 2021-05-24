@@ -80,6 +80,7 @@
   changed_when: killseleniumresults.rc == 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   failed_when: killseleniumresults.rc != 0 and 'The process "selenium_agent_server.exe" not found.' not in killseleniumresults.stderr
   become: yes
+  ignore_errors: yes
 
 - name: kill the old selenium grid nodes
   win_shell: |
@@ -88,6 +89,7 @@
   changed_when: killgridresults.rc == 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
   failed_when: killgridresults.rc != 0 and 'The process "selenium_grid_node.exe" not found.' not in killgridresults.stderr
   become: yes
+  ignore_errors: yes
 
 # kill notepadd
 
