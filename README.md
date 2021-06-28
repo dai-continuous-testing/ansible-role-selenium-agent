@@ -20,7 +20,7 @@ Role Variables
 | autologin_pass | password for auto login (required for windows) | strings |  | yes |
 | extra_application_properties | additional props to be override in application.properties file | dict | {} | no |
 | extra_logback_properties | additional props to be override in logback.properties file | dict | {} | no |
-| extra_varfile_properties | additional varfile properties | array of strings | [] | no |
+| extra_varfile_options | additional varfile options | array of strings | [] | no |
 | extra_java_options | extend java options | array of strings | [] | no |
 | installation_folder | the folder in which the applcation will be installed | string | for mac: ~/SeleniumAgent <br> for windows: ~\\SeleniumAgent  | no |
 | custom_download_url | custom url to download the installation from (exe or dmg format) | string |  | no |

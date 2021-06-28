@@ -14,7 +14,7 @@ __server_port: 8080
 
 extra_java_options: []
 
-extra_varfile_properties: []
+extra_varfile_options: []
 
 base_application_properties:
   - "server.port": "{{ server_port }}"
