@@ -98,35 +98,6 @@
   become: yes
   when: use_external_proxy == True
 
-# stop old service
-
-- name: stop selenium agent service
-  shell: "/bin/kill $(ps -ef | grep selenium_agent_server | grep -v grep | awk '{print $2}' | xargs)"
-  become: yes
-  changed_when: no
-  failed_when: no
-  ignore_errors: yes
-
-
-# - name: wait for 10 seconds
-#   pause:
-#     seconds: 10
-
-
-  ## need to check weather it requires to stop ?
-- name: stop other service
-  shell: "/bin/kill -9 $(ps -ef | grep {{ item }} | grep -v grep | awk '{print $2}' | xargs)"
-  with_items:
-    - selenium_agent_server
-    - selenium_grid_node
-    - manual.*.jar
-    - watch
-    - safaridriver
-  become: yes
-  changed_when: no
-  failed_when: no
-  ignore_errors: yes
-
 # delete old installation (optional)
 
 - name: clear old installation folder
@@ -182,34 +153,6 @@
     remote_src: yes
   become: yes
   when: server_varfile.stat.exists
-
-# set permission for selenium agent shared folder
-- name: check if selenium bin folder exists
-  stat:
-    path: /Users/Shared/SeleniumAgent/bin
-  become: yes
-  register: stat_bin
-
-- name: set permission selenium bin folder
-  file:
-    path: "/Users/Shared/SeleniumAgent/bin"
-    state: directory
-    recurse: yes
-    owner: "{{ ansible_user_id }}"
-    mode: '0777'
-  become: yes
-  when: stat_bin.stat.exists
-
-- name: set permission seleniumagent shared folder
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0777'
-  with_items:
-    - /Users/Shared/SeleniumAgent
-    - /Users/Shared/SeleniumAgent/logs
-  become: yes
-  when: stat_bin.stat.exists
 
 # start installation
 
@@ -293,23 +236,7 @@
   with_items: "{{ extra_java_options }}"
   become_user: "{{ ansible_user_id }}"
   become: yes
-
-## INVESTIGATE do we need this?
-- name: enable safari driver
-  command: /usr/bin/safaridriver --enable
-  become: yes
-  ignore_errors: yes
   
-# set permission to logs folder
-
-- name: set permissions for logs folder
-  file:
-    path: "{{ installation_folder }}/logs"
-    state: directory
-    mode: '0777'
-    owner: "{{ ansible_user_id }}"
-  become: yes
-
 # enable / disable proxy tunneling
 
 - name: enable proxy tunneling if true
