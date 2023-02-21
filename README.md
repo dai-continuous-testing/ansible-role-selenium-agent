@@ -38,6 +38,8 @@ Role Variables
 | external_proxy_port | when use_external_proxy is True, set proxy port | number |  | no |
 | external_proxy_user | when use_external_proxy is True, set proxy user | string |  | no |
 | external_proxy_password | when use_external_proxy is True, set proxy password | string |  | no |
+| download | only download the release version | boolean | True | no |
+| deploy | only deploy the release version | boolean | True | no |
 
 Example Playbook
 ----------------
