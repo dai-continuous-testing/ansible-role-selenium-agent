@@ -5,15 +5,27 @@
 
 - name: validate auto login
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-autologin.yml"
-  when: state|default('present') == 'present' and enable_autologin == True
+  when: 
+    - state|default('present') == 'present' 
+    - enable_autologin == True
+    - deploy | default('true') | bool
 
 - name: install
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-install.yml"
-  when: state|default('present') == 'present'
+  when: 
+    - state|default('present') == 'present'
+    - download | default('true') | bool
+
+- name: deploy selenium
+  include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-deploy.yml"
+  when: 
+    - state|default('present') == 'present'
+    - deploy | default('true') | bool
 
 - name: clear temp folder
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-clear-temp.yml"
-  when: clear_temp_folder | default('no') | bool
+  when: 
+    - clear_temp_folder | default('no') | bool
 
 - name: uninstall
   include_tasks: "tasks/{{ ansible_os_family | os_family_to_os_type }}-uninstall.yml"
