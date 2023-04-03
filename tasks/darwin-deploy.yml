@@ -100,6 +100,15 @@
   become: yes
   when: server_varfile.stat.exists
 
+# copy plist
+- name: copy selenium agent plist
+  template:
+    src: service.plist.j2
+    dest: "{{ service_plist_file_path }}"
+    mode: 0755
+    owner: root
+  become: yes
+
 # start installation
 
 - name: make sure installation logs folder exists

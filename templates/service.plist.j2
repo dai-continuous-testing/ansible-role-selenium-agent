@@ -2,29 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-
-    <key>Label</key>
-    <string>{{ service_name }}</string>
-    
-    <key>ProgramArguments</key>
-    <array>
-        <string>{{ installation_folder }}/{{ launcher_file_name }}</string>
-    </array>
-
-    <key>KeepAlive</key>
-    <true/>
-
-    <key>RunAtLoad</key>
-    <true/>
-
-    <key>StandardErrorPath</key>
-    <string>{{ installation_folder }}/logs/{{ app_name }}.err.log</string>
-
-    <key>StandardOutPath</key>
-    <string>{{ installation_folder }}/logs/{{ app_name }}.out.log</string>
-
-    <key>WorkingDirectory</key>
-    <string>{{ installation_folder }}</string>
-
+	<key>Label</key>
+	<string>com.experitest.selenium.support.service.plist</string>
+	<key>ServiceDescription</key>
+	<string>Selenium Support Service</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/Shared/SeleniumAgent/jre/bin/java</string>
+		<string>-jar</string>
+    <string>/Users/Shared/SeleniumAgent/lib/selenium-support-service-0.0.jar</string>
+    <string>start-launchd</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/Users/Shared/SeleniumAgent/logs/SupportServiceErrors.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/Shared/SeleniumAgent/logs/SupportServiceOutput.log</string>
 </dict>
 </plist>
