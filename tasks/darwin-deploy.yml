@@ -122,7 +122,7 @@
   async: 300
   poll: 0
   register: installer_sync
-  become_user: "{{ ansible_user_id }}"
+  become_user: "root"
   become: yes
 
 - name: wait for installer
