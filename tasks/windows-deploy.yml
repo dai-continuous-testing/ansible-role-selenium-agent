@@ -95,13 +95,19 @@
     path: "{{ installation_folder }}"
     state: directory
   become: yes
-
 - name: run the installer
-  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 300"
-  async: 300
+  win_shell: |
+    $proc = Start-Process -FilePath "{{ temp_folder }}\{{ installer_file_name }}" `
+      -ArgumentList "-q -wait 300" `
+      -Verb RunAs `
+      -Wait `
+      -PassThru
+    exit $proc.ExitCode
+  async: 360
   poll: 0
   register: installer_sync
   become: yes
+  become_method: runas
 
 - name: wait for installer
   async_status:
@@ -112,14 +118,16 @@
   delay: 10
   ignore_errors: yes
   become: yes
+  become_method: runas
 
 - name: fail when error is not disconnection
   fail:
     msg: "unrecognized error {{ wait_for_installer.msg }}"
   when:
     - wait_for_installer is failed
-#    - wait_for_installer.msg != 'Unexpected failure during module execution.'
-
+    - wait_for_installer.msg is defined
+    - "'Unexpected failure during module execution.' not in wait_for_installer.msg"
+    
 - name: make sure machine is reachable
   wait_for_connection:
     delay: 0
