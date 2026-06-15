@@ -96,47 +96,29 @@
     state: directory
   become: yes
 
-- name: run installer as SYSTEM via scheduled task
-  win_scheduled_task:
-    name: SeleniumAgentInstall
-    actions:
-      - path: "{{ temp_folder }}\\{{ installer_file_name }}"
-        arguments: "-q -wait 300"
-    triggers:
-      - type: registration
-    username: SYSTEM
-    run_level: highest
-    state: present
-    enabled: yes
+- name: run the installer
+  win_command: "{{ temp_folder }}\\{{ installer_file_name }} -q -wait 300"
+  async: 300
+  poll: 0
+  register: installer_sync
+  become: yes
 
-- name: wait for installer scheduled task
-  win_scheduled_task_stat:
-    name: SeleniumAgentInstall
-  register: task_stat
-  until: >
-    task_stat.state.status == "Ready" or
-    task_stat.state.status == "Unknown"
-  retries: 36
+- name: wait for installer
+  async_status:
+    jid: "{{ installer_sync.ansible_job_id }}"
+  register: wait_for_installer
+  until: wait_for_installer.finished
+  retries: 30
   delay: 10
-
-- name: remove scheduled task
-  win_scheduled_task:
-    name: SeleniumAgentInstall
-    state: absent
-
-- name: fail if installer task failed
-  fail:
-    msg: "Installer failed with result code: {{ task_stat.state.last_task_result }}"
-  when: task_stat.state.last_task_result != 0
+  ignore_errors: yes
+  become: yes
 
 - name: fail when error is not disconnection
   fail:
     msg: "unrecognized error {{ wait_for_installer.msg }}"
   when:
     - wait_for_installer is failed
-    - wait_for_installer.msg is defined
-    - "'Unexpected failure during module execution.' not in wait_for_installer.msg"
-    - "'non-zero return code' not in wait_for_installer.msg"  # add this line
+#    - wait_for_installer.msg != 'Unexpected failure during module execution.'
 
 - name: make sure machine is reachable
   wait_for_connection:
