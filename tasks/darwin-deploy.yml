@@ -183,7 +183,7 @@
     path: "{{ installation_folder }}/selenium_agent_server.vmoptions"
     line: "{{ item }}"
     regexp: "^{{ item }}"
-  with_items: "{{ extra_java_options }}"
+  with_items: "{{ extra_java_options + enabled_otel_java_options }}"
   become_user: "{{ ansible_user_id }}"
   become: yes
   

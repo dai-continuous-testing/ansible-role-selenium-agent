@@ -73,3 +73,16 @@
     - externalProxyPassword={{ external_proxy_password | default('') }}
   become: yes
   when: use_external_proxy == True
+
+- name: Create directory for OTEL jar
+  win_file:
+    path: "{{ installation_folder }}/otel"
+    state: directory
+  when: otel_enabled | bool
+
+- name: Download OpenTelemetry Java agent jar
+  win_get_url:
+    url: "{{ otel_download_url }}"
+    dest: "{{ otel_jar_full_path }}"
+    timeout: "{{ download_timeout | default(60) }}"
+  when: otel_enabled | bool
