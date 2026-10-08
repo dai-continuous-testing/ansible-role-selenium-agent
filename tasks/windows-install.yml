@@ -65,7 +65,7 @@
   win_lineinfile:
     path: "{{ temp_folder }}\\{{ (installer_file_name | splitext)[0] }}.varfile"
     line: "{{ item }}"
-    regexp: "^{{ item }}"
+    regexp: "^{{ item | regex_escape }}$"
   with_items:
     - externalProxyHost={{ external_proxy_host | default('localhost') }}
     - externalProxyPort={{ external_proxy_port | default('8080') }}

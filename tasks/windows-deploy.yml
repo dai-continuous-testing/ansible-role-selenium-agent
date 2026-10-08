@@ -149,7 +149,7 @@
   win_lineinfile:
     path: "{{ installation_folder }}\\selenium_agent_server.vmoptions"
     line: "{{ item }}"
-    regexp: "^{{ item }}"
+    regexp: "^{{ item | regex_escape }}$"
   with_items: "{{ extra_java_options + enabled_otel_java_options }}"
   become: yes
 
