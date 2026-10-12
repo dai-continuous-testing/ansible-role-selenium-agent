@@ -74,15 +74,22 @@
   become: yes
   when: use_external_proxy == True
 
-- name: Create directory for OTEL jar
-  win_file:
-    path: "{{ installation_folder }}/otel"
-    state: directory
+- name: manage OpenTelemetry Java agent jar
   when: otel_enabled | bool
+  block:
+    - name: Create directory for OTEL jar
+      win_file:
+        path: "{{ installation_folder }}/otel"
+        state: directory
 
-- name: Download OpenTelemetry Java agent jar
-  win_get_url:
-    url: "{{ otel_download_url }}"
-    dest: "{{ otel_jar_full_path }}"
-    timeout: "{{ download_timeout | default(60) }}"
-  when: otel_enabled | bool
+    - name: check if OTEL jar exists
+      win_stat:
+        path: "{{ otel_jar_full_path }}"
+      register: otel_jar_stat
+
+    - name: Download OpenTelemetry Java agent jar
+      win_get_url:
+        url: "{{ otel_download_url }}"
+        dest: "{{ otel_jar_full_path }}"
+        timeout: "{{ download_timeout | default(60) }}"
+      when: not otel_jar_stat.stat.exists
