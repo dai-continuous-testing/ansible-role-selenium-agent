@@ -102,18 +102,25 @@
   become: yes
   when: use_external_proxy == True
 
-- name: Create directory for OTEL jar
-  file:
-    path: "{{ installation_folder }}/otel"
-    state: directory
-    owner: "{{ ansible_user_id }}"
-  become: yes
+- name: manage OpenTelemetry Java agent jar
   when: otel_enabled | bool
+  block:
+    - name: Create directory for OTEL jar
+      file:
+        path: "{{ installation_folder }}/otel"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+      become: yes
 
-- name: Download OpenTelemetry Java agent jar
-  get_url:
-    url: "{{ otel_download_url }}"
-    dest: "{{ otel_jar_full_path }}"
-    mode: '0644'
-    timeout: "{{ download_timeout | default(60) }}"
-  when: otel_enabled | bool
+    - name: check if OTEL jar exists
+      stat:
+        path: "{{ otel_jar_full_path }}"
+      register: otel_jar_stat
+
+    - name: Download OpenTelemetry Java agent jar
+      get_url:
+        url: "{{ otel_download_url }}"
+        dest: "{{ otel_jar_full_path }}"
+        mode: '0644'
+        timeout: "{{ download_timeout | default(60) }}"
+      when: not otel_jar_stat.stat.exists
